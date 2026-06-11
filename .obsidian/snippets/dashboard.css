@@ -1,0 +1,364 @@
+/* ============================================================
+   AIR VAULT — Dashboard · HLB_ 浅色风格
+   等宽 · 零圆角(锐角) · 暖白底 · 橙色 accent · 编号分区
+   叠在 Brutalist 主题的 masonry(column) 网格上。
+   启用：Settings - Appearance - CSS snippets - dashboard
+   ============================================================ */
+
+html body.obsidian-app .markdown-preview-view.dashboard,
+html body.obsidian-app .markdown-source-view.mod-cm6.dashboard .cm-content {
+  --bg: #F4F2EC;
+  --surface-1: #FFFFFF;
+  --surface-2: #FBFAF5;
+  --text-primary: #1B1813;
+  --text-secondary: #57534B;
+  --text-muted: #8E887C;
+  --border: #DBD7CB;
+  --accent: #FF5C00;
+  --accent-10: rgba(255, 92, 0, 0.07);
+  --accent-25: rgba(255, 92, 0, 0.22);
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", "Andale Mono", monospace;
+}
+
+/* ── 画布：暖白底 + 等宽 ── */
+html body.obsidian-app .markdown-preview-view.dashboard {
+  background: var(--bg) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-mono) !important;
+  counter-reset: hlbsec;
+  padding: 8px 18px 40px !important;
+}
+html body.obsidian-app .markdown-preview-view.dashboard * { font-family: var(--font-mono) !important; }
+html body.obsidian-app .markdown-preview-view.dashboard a { color: var(--text-secondary); text-decoration: none; }
+html body.obsidian-app .markdown-preview-view.dashboard a:hover { color: var(--accent); }
+
+/* ── 隐藏笔记标题 + 属性栏（主页门户，不显示 "Dashboard"/Properties）── */
+html body.obsidian-app .markdown-preview-view.dashboard .inline-title,
+html body.obsidian-app .markdown-preview-view.dashboard .metadata-container,
+html body.obsidian-app .markdown-preview-view.dashboard .frontmatter { display: none !important; }
+
+/* ── HERO（abstract，全宽，双栏：左标题 + 右上指标网格）── */
+html body.obsidian-app .dashboard .callout[data-callout="abstract"] {
+  column-span: all;
+  background: none !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 4px 2px 12px !important;
+  margin: 0 0 4px !important;
+}
+html body.obsidian-app .dashboard .callout[data-callout="abstract"] .callout-title { display: none !important; }
+html body.obsidian-app .dashboard .callout[data-callout="abstract"] .callout-content { padding: 0; }
+
+/* 三段式容器：左标题 | 中本体构成 | 右指标，占满整条 */
+html body.obsidian-app .dashboard .hlb-hero {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+html body.obsidian-app .dashboard .hlb-hero-main {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-right: 30px;
+}
+/* 中段：本体类型构成 + 健康（填补标题与指标之间的空白）*/
+html body.obsidian-app .dashboard .hlb-hero-mid {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 4px 30px;
+  border-left: 1px solid var(--border);
+}
+html body.obsidian-app .dashboard .hlb-mid-lbl { color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+html body.obsidian-app .dashboard .hlb-hero-mid .hlb-types { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; }
+html body.obsidian-app .dashboard .hlb-hero-mid .ht { color: var(--text-secondary); }
+html body.obsidian-app .dashboard .hlb-hero-mid .ht b { color: var(--text-primary); margin-left: 6px; font-weight: 800; }
+html body.obsidian-app .dashboard .hlb-badge {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 11px;
+  background: var(--accent-10);
+  border: 1px solid var(--accent-25);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+}
+html body.obsidian-app .dashboard .hlb-hero h1 {
+  font-size: clamp(34px, 5.2vw, 66px) !important;
+  font-weight: 800 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.04em !important;
+  text-transform: uppercase !important;
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+  border: none !important;
+  color: var(--text-primary) !important;
+}
+html body.obsidian-app .dashboard .hlb-hero h1 em { font-style: italic; color: var(--accent) !important; }
+html body.obsidian-app .dashboard .hlb-greet { color: var(--text-muted); font-size: 13px; letter-spacing: 0.5px; }
+
+/* 右段：指标网格 */
+html body.obsidian-app .dashboard .hlb-hero-stats {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(58px, auto));
+  gap: 12px 26px;
+  padding: 2px 0 2px 30px;
+  border-left: 1px solid var(--border);
+}
+html body.obsidian-app .dashboard .hlb-stat { display: flex; flex-direction: column; }
+html body.obsidian-app .dashboard .hlb-stat b { font-size: 25px; font-weight: 800; line-height: 1; color: var(--text-primary); }
+html body.obsidian-app .dashboard .hlb-stat span { margin-top: 4px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+
+/* 导航行 */
+html body.obsidian-app .dashboard .callout[data-callout="abstract"] .callout-content > p:last-child {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+html body.obsidian-app .dashboard .callout[data-callout="abstract"] .callout-content > p:last-child a {
+  color: var(--text-muted);
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── 健康徽标（位于 Hero 中段）── */
+html body.obsidian-app .dashboard .hlb-badge2 { align-self: flex-start; padding: 3px 11px; border: 1px solid; font-size: 11px; letter-spacing: 1px; }
+html body.obsidian-app .dashboard .hlb-badge2.ok { color: #2DA44E; border-color: rgba(45,164,78,.4); background: rgba(45,164,78,.07); }
+html body.obsidian-app .dashboard .hlb-badge2.warn { color: #E5484D; border-color: rgba(229,72,77,.4); background: rgba(229,72,77,.07); }
+
+/* ── 分区标题 H2（全宽横幅）── */
+html body.obsidian-app .dashboard h2 {
+  column-span: all;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 6px 2px 10px !important;
+  padding: 0 0 8px !important;
+  font-size: 1.3em !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase;
+  color: var(--text-primary) !important;
+  border: none !important;
+  border-bottom: 1.5px solid var(--text-primary) !important;
+}
+
+/* 信息流四阶段：每张卡片各起一列（横向并排）
+   兼容两种 DOM：裸 .callout 相邻；以及 Obsidian 阅读视图把每个块包进 .el-callout */
+html body.obsidian-app .dashboard .callout + .callout:not([data-callout="abstract"]):not([data-callout="quote"]) { break-before: column; }
+html body.obsidian-app .dashboard .el-callout + .el-callout { break-before: column; }
+html body.obsidian-app .dashboard .el-callout:has(> .callout[data-callout="quote"]) { break-before: avoid; }
+html body.obsidian-app .dashboard h2::before {
+  counter-increment: hlbsec;
+  content: counter(hlbsec, decimal-leading-zero);
+  font-size: 0.95em;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0;
+}
+
+/* ── 流程横幅（h2 后段落：发散 → 研究 → 编译 → 看板）全宽 ── */
+html body.obsidian-app .dashboard h2 + p {
+  column-span: all;
+  margin: 0 2px 14px !important;
+  color: var(--text-muted);
+  font-size: 0.84em;
+  letter-spacing: 1.5px;
+}
+html body.obsidian-app .dashboard h2 + p code {
+  background: var(--text-primary);
+  border: none;
+  border-radius: 0;
+  padding: 6px 16px;
+  margin: 0 2px;
+  color: var(--bg);
+  font-weight: 700;
+}
+
+/* ── 卡片（锐角白卡 + 细边 + 橙标题）── */
+html body.obsidian-app .dashboard .callout {
+  margin: 0 0 12px 0 !important;
+  padding: 12px 16px 13px !important;
+  background: var(--surface-1) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  break-inside: avoid;
+  transition: border-color .15s ease;
+}
+html body.obsidian-app .dashboard .callout:hover { border-color: var(--accent) !important; }
+html body.obsidian-app .dashboard .callout .callout-title {
+  padding: 0 0 10px 0 !important;
+  margin: 0 !important;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.72em !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent) !important;
+  border-bottom: 1px solid var(--border);
+}
+html body.obsidian-app .dashboard .callout .callout-icon { display: none !important; }
+html body.obsidian-app .dashboard .callout .callout-content { padding-top: 10px; color: var(--text-secondary); }
+html body.obsidian-app .dashboard .callout .callout-content p { color: var(--text-secondary); }
+html body.obsidian-app .dashboard .callout .callout-content strong { color: var(--text-primary); }
+html body.obsidian-app .dashboard .callout .callout-content > p:first-child { margin-top: 0; }
+
+/* ── 表格（HLB：大写 muted 表头 + 细线）── */
+html body.obsidian-app .dashboard .callout table.dataview { width: 100%; border-collapse: collapse; font-size: 0.82em; }
+html body.obsidian-app .dashboard .callout table.dataview th {
+  text-align: left;
+  padding: 3px 10px 7px 0;
+  color: var(--text-muted);
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+html body.obsidian-app .dashboard .callout table.dataview td {
+  padding: 6px 10px 6px 0;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--surface-2);
+}
+html body.obsidian-app .dashboard .callout table.dataview tr:last-child td { border-bottom: none; }
+html body.obsidian-app .dashboard .callout table.dataview tbody tr:hover td { background: var(--accent-10); }
+html body.obsidian-app .dashboard .callout table.dataview a { color: var(--text-primary); font-weight: 600; }
+html body.obsidian-app .dashboard .callout table.dataview a:hover { color: var(--accent); }
+
+/* ── 任务 ── */
+html body.obsidian-app .dashboard .callout .task-list-item { padding: 3px 0; font-size: 0.9em; color: var(--text-secondary); }
+html body.obsidian-app .dashboard .callout .task-list-item input { accent-color: var(--accent); margin-right: 8px; }
+
+/* ── 本体拓扑 ASCII ── */
+html body.obsidian-app .dashboard .callout[data-callout="note"] pre,
+html body.obsidian-app .dashboard .callout[data-callout="note"] code {
+  font-size: 0.7em;
+  line-height: 1.4;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--text-secondary);
+}
+
+/* ── FOOTER（quote，全宽，© 2026 HLB_）── */
+html body.obsidian-app .dashboard .callout[data-callout="quote"] {
+  column-span: all;
+  background: none !important;
+  border: none !important;
+  border-top: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 14px 2px 4px !important;
+  margin-top: 22px !important;
+}
+html body.obsidian-app .dashboard .callout[data-callout="quote"]:hover { border-color: var(--border) !important; }
+html body.obsidian-app .dashboard .callout[data-callout="quote"] .callout-title,
+html body.obsidian-app .dashboard .callout[data-callout="quote"] .callout-icon { display: none !important; }
+html body.obsidian-app .dashboard .callout[data-callout="quote"] .callout-content {
+  padding-top: 0;
+  font-size: 0.72em;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+html body.obsidian-app .dashboard .callout[data-callout="quote"] .callout-content a { color: var(--text-muted); }
+html body.obsidian-app .dashboard .callout[data-callout="quote"] .callout-content a:hover { color: var(--accent); }
+
+/* ============================================================
+   v2 布局 · 显式 CSS Grid（覆盖 Brutalist 主题瀑布流多栏）
+   阶段 0→4：0 待消化(左上) · 1 发散(加宽,顶行右) · 2 行动 / 3 编译 / 4 看板(铺底)
+   grid-template-areas 把每张卡片钉到固定位置，发散横跨两列加宽。
+   ============================================================ */
+html body.obsidian-app .markdown-preview-view.dashboard .markdown-preview-section {
+  display: grid !important;
+  columns: unset !important;
+  grid-template-columns: minmax(190px, 0.6fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "hero hero hero"
+    "s0   s1   s1"
+    "s2   s1   s1"
+    "s2   s3   s4"
+    "foot foot foot";
+  align-items: start;        /* 每格内容顶对齐 */
+  align-content: start;      /* 整组行紧贴顶部——消除被 align-content 分配出来的大段竖向空白 */
+  column-gap: 6px;
+  row-gap: 6px;
+}
+/* 虚拟滚动占位若成为 grid 项会撑出空行，仪表盘单屏不需要它 */
+html body.obsidian-app .markdown-preview-view.dashboard .markdown-preview-pusher { display: none !important; }
+
+/* 把每张卡片钉进命名区——不假设包裹层是 .el-callout 还是裸 .callout：
+   用 :has 命中"直接子项里含某 data-callout 的那一项"，对任何包裹结构都成立。
+   裸 .callout 自身不含子 callout，故另列一条直接命中。 */
+html body.obsidian-app .dashboard .markdown-preview-section > *:has(.callout[data-callout="abstract"]),
+html body.obsidian-app .dashboard .markdown-preview-section > .callout[data-callout="abstract"] { grid-area: hero; }
+html body.obsidian-app .dashboard .markdown-preview-section > *:has(.callout[data-callout="warning"]),
+html body.obsidian-app .dashboard .markdown-preview-section > .callout[data-callout="warning"]  { grid-area: s0; }   /* 0 待消化 */
+html body.obsidian-app .dashboard .markdown-preview-section > *:has(.callout[data-callout="note"]),
+html body.obsidian-app .dashboard .markdown-preview-section > .callout[data-callout="note"]     { grid-area: s1; }   /* 1 发散   */
+html body.obsidian-app .dashboard .markdown-preview-section > *:has(.callout[data-callout="todo"]),
+html body.obsidian-app .dashboard .markdown-preview-section > .callout[data-callout="todo"]     { grid-area: s2; }   /* 2 行动   */
+html body.obsidian-app .dashboard .markdown-preview-section > *:has(.callout[data-callout="info"]),
+html body.obsidian-app .dashboard .markdown-preview-section > .callout[data-callout="info"]     { grid-area: s3; }   /* 3 编译   */
+html body.obsidian-app .dashboard .markdown-preview-section > *:has(.callout[data-callout="success"]),
+html body.obsidian-app .dashboard .markdown-preview-section > .callout[data-callout="success"]  { grid-area: s4; }   /* 4 看板   */
+html body.obsidian-app .dashboard .markdown-preview-section > *:has(.callout[data-callout="quote"]),
+html body.obsidian-app .dashboard .markdown-preview-section > .callout[data-callout="quote"]    { grid-area: foot; }
+
+/* grid 项自身去掉外边距，间距统一交给 grid gap */
+html body.obsidian-app .dashboard .markdown-preview-section > .el-callout,
+html body.obsidian-app .dashboard .markdown-preview-section > .callout { margin: 0 !important; }
+html body.obsidian-app .dashboard .el-callout > .callout { margin: 0 !important; }
+
+/* 嵌入内容里的标题（如 看板 卡内的「知识结构」）不参与分区编号 */
+html body.obsidian-app .dashboard .markdown-embed h2::before,
+html body.obsidian-app .dashboard .markdown-embed h1::before { content: none !important; counter-increment: none !important; }
+
+/* 移动端：单列堆叠，避免三列挤压 */
+html body.obsidian-app.is-mobile .markdown-preview-view.dashboard .markdown-preview-section {
+  grid-template-columns: 1fr;
+  grid-template-areas: "hero" "s0" "s1" "s2" "s3" "s4" "foot";
+}
+
+/* ── 流向横幅：浮在导航行右侧（省下原本独占两行的竖向空间）── */
+html body.obsidian-app .dashboard .hlb-flow {
+  float: right;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 7px;
+  margin-left: 18px;
+  color: var(--text-muted);
+}
+html body.obsidian-app .dashboard .hlb-flow em {
+  font-style: normal;
+  color: var(--text-muted);
+  font-size: 0.72em;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-right: 2px;
+}
+html body.obsidian-app .dashboard .hlb-flow code {
+  background: var(--text-primary);
+  border: none;
+  border-radius: 0;
+  padding: 2px 8px;
+  color: var(--bg);
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}

@@ -1,0 +1,9 @@
+{
+  "enabledCssSnippets": [
+    "dashboard"
+  ],
+  "cssTheme": "Brutalist",
+  "interfaceFontFamily": "Andale Mono",
+  "textFontFamily": "Andale Mono",
+  "translucency": false
+}

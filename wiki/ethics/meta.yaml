@@ -1,0 +1,13 @@
+name: ethics
+domain: ethics
+direction: 实践哲学          # 大方向（科技 / 金融），_index.md 据此分组
+ontology_type: domain
+description: 伦理学与政治哲学：规范、价值、美德、正义
+central_entity: 道德
+hub: 伦理学                       # Obsidian Hub 页文件名（不含 .md）
+keywords: [伦理, 道德, 义务论, 功利主义, 后果主义, 美德, 正义, 权利, 元伦理, 价值, 电车难题, 政治哲学, 自由, 平等]                 # 路由关键词：ingest/recall 据此判断材料属哪个域
+validator: none
+validator_coverage: none
+schema_version: '2.0'
+created: '2026-06-11'
+updated: '2026-06-11'

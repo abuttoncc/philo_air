@@ -1,0 +1,13 @@
+name: epistemology
+domain: epistemology
+direction: 理论哲学          # 大方向（科技 / 金融），_index.md 据此分组
+ontology_type: domain
+description: 认识论：知识、信念、辩护、怀疑论、真理
+central_entity: 知识
+hub: 认识论                       # Obsidian Hub 页文件名（不含 .md）
+keywords: [认识论, 知识, 信念, 辩护, 真理, 怀疑论, 归纳, 先验, 经验主义, 理性主义, 葛梯尔, 证据, 可错论]                 # 路由关键词：ingest/recall 据此判断材料属哪个域
+validator: none
+validator_coverage: none
+schema_version: '2.0'
+created: '2026-06-11'
+updated: '2026-06-11'
