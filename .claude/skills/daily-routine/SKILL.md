@@ -41,7 +41,7 @@ description: |
 4. **建立连接**：答案内回链 wiki 节点、[[02-Areas/哲学研究]]、来源页（`wiki/{domain}/来源/`）、上一次答案。
 5. **缺口检测**：委托 auto-wiki lint(Coverage) —— 列出回答时 wiki 里**缺/过期**的节点（断链、单来源、陈旧数据、被引未建页）。
 6. **外部获取（若有缺口）**：deep-dive —— 用 WebSearch / 网页阅读（SEP / IEP / PhilPapers）取材 →（关键缺口）按 auto-wiki ingest 协议补进 `wiki/{domain}/`（建节点/事件、数值进 data.db、补关系边）→ 用新知识**补全答案**。每个缺口最多搜 3 次，搜不到标"未能补全"。
-7. **写回答案**：把本次答案作为 `### <as-of> (as-of)` 块 **append 进该问题文件「## 答案历史」的顶部**；更新 frontmatter `last-run: <today>`、`status: fresh`。
+7. **写回答案**：把本次答案作为 `### <as-of> (as-of)` 块 **append 进该问题文件「## 答案历史」的顶部**；更新 frontmatter `last-run: <today>`、`status: fresh`、`last-summary: <一句话结论>`（供 Dashboard QA 时间线读取）。
 
 ### Step 3 — 回写 Daily
 - 在 `05-Daily/<today>.md` 的「## 笔记/阅读」记：跑了哪些问题 + 各自一句话结论 + 触发的 deep-dive/ingest 动作。
@@ -71,3 +71,10 @@ description: |
 |---|---|
 | recall / ingest / lint(Coverage) | `auto-wiki`（wiki/{domain} 本体） |
 | SEP / IEP / PhilPapers / 公开网页 | WebSearch / 网页阅读 |
+
+
+## 陋居接线（08-Ops，2026-06-12 起）
+
+- **无人值守 run**（launchd，暂未接线；接线后生效）：开跑在 `08-Ops/runs/` 建 run 档（status: running），结束补全「## 飞轮」步进 / outputs / status；**产出收口**：高危写入（newnode / retire / disputed / xedge=grounds 族）先查 `08-Ops/审批账本.md`——gate `state: auto` 直写并在审计日志 append 记账，其余落 `08-Ops/review/` 候选卡。
+- **交互 run**（用户在终端）：高危写入当场问用户，裁决即记审批账（批准 streak+1 / 驳回清零 / contested 原地记）；跑完更新 `08-Ops/routines/答题员.md` 的 `last-run` / `last-result`。
+- **「处理审核队列」**：读 `08-Ops/review/` 全部 pending 候选 → 逐张报卡（gate + diff + 来源 + 审批账本上下文）→ 按裁决执行写入 / 翻卡 / 记账。

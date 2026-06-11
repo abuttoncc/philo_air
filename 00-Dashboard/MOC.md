@@ -26,6 +26,17 @@ SORT file.mtime DESC
 LIMIT 12
 ```
 
+## 陋居自动化层 08-Ops
+
+> agent 契约 / run 记录 / 审核队列 / [[08-Ops/审批账本|审批账本]]。入口 [[08-Ops/README|README]]。
+
+```dataview
+TABLE WITHOUT ID file.link AS agent, status AS 状态, last-run AS 最近运行, last-result AS 最近产出
+FROM "08-Ops/routines"
+WHERE type = "routine"
+SORT sort ASC
+```
+
 ## 收集箱 Inbox
 
 ```dataview

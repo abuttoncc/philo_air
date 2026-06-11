@@ -22,6 +22,7 @@ Obsidian 个人哲学知识库，覆盖**理论哲学 + 实践哲学两大方向
 | `04-Archive/` | 已完成/归档 |
 | `05-Daily/` | 每日笔记 |
 | `06-Templates/` | 模板（含研究笔记、读书笔记模板） |
+| `08-Ops/` | **陋居自动化层**：agent 契约 / run 记录 / 审核队列 / 审批账本（详见第七节） |
 | `09-Attachments/` | 附件（图片、PDF），编号 09 排在最后 |
 | `Inbox/` | 收集箱：散文式思考、困惑、讨论记录、读书摘记，每条独立文件 |
 
@@ -187,3 +188,26 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 `recall(加载 wiki 本体) → 复盘(上次立场) → 推演(当前立场+一句话理由) → 建立连接 → lint 缺口检测 → 缺口则 deep-dive 外部获取并 ingest 回 wiki → 追加答案 → 回写 Daily`。
 
 **答案 append 不覆盖；ingest 守退役不删除协议。**
+
+---
+
+## 七、陋居自动化层（08-Ops）
+
+> 蓝图：`ref/burrow-workspace-blueprint.md`。隐喻：陋居（The Burrow）——人做深度思考与全局掌控，「当 X 发生 → 做 Y」的模式化劳动交给受契约约束的 agent（routine）。
+
+在库的 8 条不变量之上加四条原则：**产出收口**（无人值守 agent 不直写高危正典，只投递候选）· **捕获免费、晋升收紧** · **连续批准升级 · 一次驳回降级**（审批账本）· **确定性优先**（能纯代码绝不用 LLM）。
+
+| 落点 | 内容 |
+|---|---|
+| `08-Ops/routines/` | agent 契约注册表（分诊员/答题员/研究员/结构巡检员/编译裁决员），契约 = trigger/scope/budget/escalation，**改契约 = 改权限** |
+| `08-Ops/runs/` | 无人值守 run 记录：开跑建档（status: running）、结束补全飞轮步进/产出/预算 |
+| `08-Ops/review/` | 审核队列：高危写入候选卡（pending → approved/rejected/contested） |
+| `08-Ops/审批账本.md` | 信任账本：每类写入 streak/threshold/state + append-only 审计日志 |
+
+**高危写入 gate**：`newnode`(新建节点) / `xedge`(跨域 grounds 边) / `t0-merge`(verified 数值合并) 可通过连续批准升为自动批准；`retire`(退役触发) 与 `disputed`(数值分歧) **永久人工**。规则：连续 threshold 次批准零驳回 → `state: auto`（无人值守可直写但仍记账）；**一次驳回 streak 清零**、已 auto 降级。
+
+**模式区分**：交互会话 = 高危写入当场问用户，**裁决即记账**；无人值守（launchd，本库暂未接定时器；接线后同规则生效）= 非 auto gate 一律落 `review/` 候选。
+
+**触发语**：「**处理审核队列**」→ 读全部 pending 候选 → 逐张报卡（gate + diff + 来源 + 审批账本上下文）→ 按用户裁决三步走：执行写入（退役走六步）/ 翻转卡片 status / 审批记账。
+
+**Dashboard**（00-Dashboard，按例外优先级排）：北极星条 → Agent 状态钟 + Agent 清单 → 审核队列 → 运行轨迹 → 审批账本 → QA 时间线。答题员答完每题把一句话结论回写 QA frontmatter `last-summary` 供时间线读取。

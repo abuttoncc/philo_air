@@ -105,3 +105,9 @@ status: digested                               # 原 open → digested
 | 被每日例行串起来调用 | `daily-routine`（Step 之间插「消化 Inbox」） |
 | 外部取材（crystallize 补证） | WebSearch / 网页阅读（SEP / IEP / PhilPapers） |
 | 轮询触发（检测层） | launchd `com.philovault.inbox-scan`（见部署说明） |
+
+
+## 陋居接线（08-Ops，2026-06-12 起）
+
+- 委托 ingest 时遵守**产出收口**：无人值守上下文中高危写入（newnode/retire/disputed/xedge=grounds 族）按 `08-Ops/审批账本.md` 状态分流——auto 直写记账，其余落 `08-Ops/review/` 候选。
+- 消化完成更新 `08-Ops/routines/分诊员.md` 的 `last-run` / `last-result`。
