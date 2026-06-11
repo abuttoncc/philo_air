@@ -38,7 +38,7 @@ cssclasses:
 > 不破坏 wikilink。
 
 ```dataview
-TABLE WITHOUT ID file.link AS Note, choice(compiled, "✅已消化", "🔴待消化") AS 消化, triage AS 分诊, status AS Status, dateformat(created, "MM-dd") AS Created
+TABLE WITHOUT ID file.link AS Note, choice(compiled, "✓ 已消化", "○ 待消化") AS 消化, triage AS 分诊, status AS Status, dateformat(created, "MM-dd") AS Created
 FROM "Inbox"
 WHERE file.name != "README"
 SORT compiled ASC, created ASC

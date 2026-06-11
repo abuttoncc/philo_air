@@ -65,7 +65,7 @@ cssclasses:
 > }
 > ```
 
-> [!example] ⚡ 控制台 · CONSOLE
+> [!example] 控制台 · CONSOLE
 > ```dataviewjs
 > // 一键唤起 Claude 跑 skill。优先 terminal 插件集成终端（cmdId）；没加载到就回退弹 Terminal.app。
 > try {
