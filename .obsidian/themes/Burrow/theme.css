@@ -49,6 +49,8 @@ body {
   --hair-2: #C9C1AD;
   --burrow-red: #C8371F;
   --burrow-red-deep: #A52C18;
+  --burrow-orange: #E55300;
+  --burrow-orange-deep: #C24600;
   --burrow-green: #2F7D4E;
   --burrow-amber: #B5851B;
 
@@ -57,7 +59,7 @@ body {
   --background-secondary: var(--paper-2);
   --background-secondary-alt: #E9E4D6;
   --background-modifier-hover: rgba(255, 255, 255, 0.55);
-  --background-modifier-active-hover: rgba(200, 55, 31, 0.08);
+  --background-modifier-active-hover: rgba(229, 83, 0, 0.08);
   --background-modifier-border: var(--hair);
   --background-modifier-border-hover: var(--hair-2);
   --background-modifier-border-focus: var(--ink);
@@ -66,21 +68,21 @@ body {
   --text-normal: var(--ink);
   --text-muted: var(--ink-2);
   --text-faint: var(--ink-3);
-  --text-accent: var(--burrow-red);
-  --text-accent-hover: var(--burrow-red-deep);
+  --text-accent: var(--burrow-orange);
+  --text-accent-hover: var(--burrow-orange-deep);
   --text-on-accent: var(--paper);
-  --text-selection: rgba(200, 55, 31, 0.16);
+  --text-selection: rgba(229, 83, 0, 0.16);
   --text-highlight-bg: #F1E6CC;
 
   --interactive-normal: var(--paper-2);
   --interactive-hover: #E9E4D6;
-  --interactive-accent: var(--burrow-red);
-  --interactive-accent-hover: var(--burrow-red-deep);
+  --interactive-accent: var(--burrow-orange);
+  --interactive-accent-hover: var(--burrow-orange-deep);
 
   --link-color: var(--ink);
-  --link-color-hover: var(--burrow-red);
+  --link-color-hover: var(--burrow-orange);
   --link-external-color: var(--ink-2);
-  --link-external-color-hover: var(--burrow-red);
+  --link-external-color-hover: var(--burrow-orange);
   --link-unresolved-color: var(--ink-3);
   --link-decoration: none;
   --link-external-decoration: none;
@@ -96,12 +98,12 @@ body {
   --tag-background: transparent;
   --tag-background-hover: var(--paper-2);
   --tag-color: var(--ink-2);
-  --tag-color-hover: var(--burrow-red);
+  --tag-color-hover: var(--burrow-orange);
   --tag-border-color: var(--hair-2);
-  --tag-border-color-hover: var(--burrow-red);
+  --tag-border-color-hover: var(--burrow-orange);
 
-  --checkbox-color: var(--burrow-red);
-  --checkbox-color-hover: var(--burrow-red-deep);
+  --checkbox-color: var(--burrow-orange);
+  --checkbox-color-hover: var(--burrow-orange-deep);
   --checkbox-border-color: var(--ink-3);
   --checkbox-border-color-hover: var(--ink);
   --checklist-done-color: var(--ink-3);
@@ -136,17 +138,17 @@ body {
   --table-header-background-hover: transparent;
   --table-row-even-background: transparent;
   --table-row-alt-background: rgba(255, 255, 255, 0.35);
-  --table-row-background-hover: rgba(200, 55, 31, 0.05);
+  --table-row-background-hover: rgba(229, 83, 0, 0.05);
   --table-border-color: var(--hair);
   --table-header-border-color: var(--hair-2);
 
   --indentation-guide-color: var(--hair);
   --indentation-guide-color-active: var(--hair-2);
 
-  --caret-color: var(--burrow-red);
+  --caret-color: var(--burrow-orange);
   --icon-color: var(--ink-2);
   --icon-color-hover: var(--ink);
-  --icon-color-active: var(--burrow-red);
+  --icon-color-active: var(--burrow-orange);
   --icon-color-focused: var(--ink);
 }
 
@@ -161,6 +163,8 @@ body {
   --hair-2: #4A4332;
   --burrow-red: #D96A4F;
   --burrow-red-deep: #E5826B;
+  --burrow-orange: #FF7A38;
+  --burrow-orange-deep: #FF9259;
   --burrow-green: #6FAE8A;
   --burrow-amber: #C99A3F;
 
@@ -169,7 +173,7 @@ body {
   --background-secondary: #181510;
   --background-secondary-alt: #14110D;
   --background-modifier-hover: rgba(255, 255, 255, 0.04);
-  --background-modifier-active-hover: rgba(217, 106, 79, 0.1);
+  --background-modifier-active-hover: rgba(255, 122, 56, 0.1);
   --background-modifier-border: var(--hair);
   --background-modifier-border-hover: var(--hair-2);
   --background-modifier-border-focus: var(--ink);
@@ -178,21 +182,21 @@ body {
   --text-normal: var(--ink);
   --text-muted: var(--ink-2);
   --text-faint: var(--ink-3);
-  --text-accent: var(--burrow-red);
-  --text-accent-hover: var(--burrow-red-deep);
+  --text-accent: var(--burrow-orange);
+  --text-accent-hover: var(--burrow-orange-deep);
   --text-on-accent: var(--paper);
-  --text-selection: rgba(217, 106, 79, 0.25);
+  --text-selection: rgba(255, 122, 56, 0.22);
   --text-highlight-bg: rgba(201, 154, 63, 0.25);
 
   --interactive-normal: var(--paper-2);
   --interactive-hover: #2B2619;
-  --interactive-accent: var(--burrow-red);
-  --interactive-accent-hover: var(--burrow-red-deep);
+  --interactive-accent: var(--burrow-orange);
+  --interactive-accent-hover: var(--burrow-orange-deep);
 
   --link-color: var(--ink);
-  --link-color-hover: var(--burrow-red);
+  --link-color-hover: var(--burrow-orange);
   --link-external-color: var(--ink-2);
-  --link-external-color-hover: var(--burrow-red);
+  --link-external-color-hover: var(--burrow-orange);
   --link-unresolved-color: var(--ink-3);
   --link-decoration: none;
   --link-external-decoration: none;
@@ -208,12 +212,12 @@ body {
   --tag-background: transparent;
   --tag-background-hover: var(--paper-2);
   --tag-color: var(--ink-2);
-  --tag-color-hover: var(--burrow-red);
+  --tag-color-hover: var(--burrow-orange);
   --tag-border-color: var(--hair-2);
-  --tag-border-color-hover: var(--burrow-red);
+  --tag-border-color-hover: var(--burrow-orange);
 
-  --checkbox-color: var(--burrow-red);
-  --checkbox-color-hover: var(--burrow-red-deep);
+  --checkbox-color: var(--burrow-orange);
+  --checkbox-color-hover: var(--burrow-orange-deep);
   --checkbox-border-color: var(--ink-3);
   --checkbox-border-color-hover: var(--ink);
   --checklist-done-color: var(--ink-3);
@@ -248,17 +252,17 @@ body {
   --table-header-background-hover: transparent;
   --table-row-even-background: transparent;
   --table-row-alt-background: rgba(255, 255, 255, 0.025);
-  --table-row-background-hover: rgba(217, 106, 79, 0.07);
+  --table-row-background-hover: rgba(255, 122, 56, 0.07);
   --table-border-color: var(--hair);
   --table-header-border-color: var(--hair-2);
 
   --indentation-guide-color: var(--hair);
   --indentation-guide-color-active: var(--hair-2);
 
-  --caret-color: var(--burrow-red);
+  --caret-color: var(--burrow-orange);
   --icon-color: var(--ink-2);
   --icon-color-hover: var(--ink);
-  --icon-color-active: var(--burrow-red);
+  --icon-color-active: var(--burrow-orange);
   --icon-color-focused: var(--ink);
 }
 
