@@ -40,7 +40,7 @@ cssclasses:
 
 > [!note] 1 发散 · INBOX
 > ```dataview
-> TABLE WITHOUT ID file.link AS 思考专题, choice(compiled, "✅", "🔴") AS 消化, triage AS 分诊, status AS 状态
+> TABLE WITHOUT ID file.link AS 思考专题, choice(compiled, "✓", "○") AS 消化, triage AS 分诊, status AS 状态
 > FROM "Inbox"
 > WHERE file.name != "README" AND file.name != "plan"
 > SORT compiled ASC, created ASC
@@ -57,10 +57,10 @@ cssclasses:
 >   const d = Math.floor(dv.date("today").diff(c, "days").days);
 >   if (d > oldest) { oldest = d; oldestName = p.file.name; }
 > }
-> if (n === 0) { dv.paragraph("✅ **收集箱已排空** —— 无未消化项，泵跟上了进料。"); }
+> if (n === 0) { dv.paragraph("✓ **收集箱已排空** —— 无未消化项，泵跟上了进料。"); }
 > else {
 >   const urgent = (oldest >= 3 || n >= 5);
->   dv.paragraph(`${urgent ? "🔴" : "🟡"} **${n}** 篇待消化 · 最老 **${oldest}** 天（${oldestName}）`);
+>   dv.paragraph(`${urgent ? "[!]" : "○"} **${n}** 篇待消化 · 最老 **${oldest}** 天（${oldestName}）`);
 >   dv.paragraph("→ 跑 `/digest-inbox` 排空；这两个数往上走 = 进料超过消化，熵在赢。");
 > }
 > ```
@@ -70,9 +70,9 @@ cssclasses:
 > // 一键唤起 Claude 跑 skill。优先 terminal 插件集成终端（cmdId）；没加载到就回退弹 Terminal.app。
 > try {
 >   const ACTIONS = [
->     { label: "🧹 消化 Inbox", cmd: "/digest-inbox",  cmdId: "terminal:open-terminal.claudeDigest.root",            desc: "扫散文 → 编译进 wiki → 打 compiled 标记" },
->     { label: "🔁 今日例行",   cmd: "/daily-routine", cmdId: "terminal:open-terminal.claudeRoutine.root",           desc: "跑 07-QA 动态问答库并回写 Daily" },
->     { label: "⌨️ 终端",       cmd: "",               cmdId: "terminal:open-terminal.darwinIntegratedDefault.root", desc: "在库根开一个空的集成终端" },
+>     { label: "消化 Inbox", cmd: "/digest-inbox",  cmdId: "terminal:open-terminal.claudeDigest.root",            desc: "扫散文 → 编译进 wiki → 打 compiled 标记" },
+>     { label: "今日例行",   cmd: "/daily-routine", cmdId: "terminal:open-terminal.claudeRoutine.root",           desc: "跑 07-QA 动态问答库并回写 Daily" },
+>     { label: "终端",       cmd: "",               cmdId: "terminal:open-terminal.darwinIntegratedDefault.root", desc: "在库根开一个空的集成终端" },
 >   ];
 >   const CLAUDE = "/Users/jameslee/.local/bin/claude";
 >   const ad = app.vault.adapter;
@@ -102,7 +102,7 @@ cssclasses:
 >   }
 >   dv.el("div", "点击 = 在集成终端（或回退弹 Terminal.app）发起命令；进度、合并守闸、权限确认都在终端里答。", { attr: { style: "font-size:11px;color:var(--text-muted);margin-top:2px" } });
 > } catch (e) {
->   dv.paragraph("⚠️ CONSOLE 渲染失败：" + (e && e.message || e));
+>   dv.paragraph("[!] CONSOLE 渲染失败：" + (e && e.message || e));
 > }
 > ```
 
