@@ -16,3 +16,27 @@
 - Facts(T2): 文化属性核心命题 / 强势文化定义 / 弱势文化定义（3条，valid_from 2005-01）
 - Conflicts: none
 - Schema: pending（见下方校验步骤）
+
+## 2026-06-12 — deep-dive（理论沿革）
+- Source: 来源/2026-06-12-理论沿革深挖（二手·权威，Agent 知识综合 SEP/IEP 与标准哲学史文献）
+- **引用纪律生效**：直引仅限可核验原典/标准中译；外文转译标原文段落（GM I §10 / Ethica E4 Praef. 等）；不确定即转述
+- Created entity: 人物/尼采、人物/韦伯、人物/马克思、人物/鲁迅；著作/《论道德的谱系》、著作/《新教伦理与资本主义精神》
+- Created concept: 概念/主人道德与奴隶道德、概念/新教伦理论题、概念/历史唯物主义、概念/国民性批判
+- Created analysis: 分析/文化属性论的理论沿革谱系（六条谱系线证据分级）
+- Updated（回填 develops 边+沿革章节）: 强势文化、弱势文化、文化属性、救世主情结、文化决定论论证
+- Relations: +21条（authored_by/proposed_by/appears_in/develops/references）
+- Facts(T2): 尼采平行判定、韦伯平行判定、马克思倒转判定、国民性批判承袭判定（4条，confidence 如实标注）
+- Events(T4): 1859-政治经济学批判序言发表、1887-论道德的谱系出版、1904-新教伦理发表、1918-狂人日记发表
+- Conflicts: none；修正上次遗留：神即道论证页自环 instance_of 边（仅 frontmatter，db 无）、蒂利希名误（詹姆斯→保罗）
+
+## 2026-06-12 — ingest（《背叛》+《天幕红尘》，三部曲补全）
+- Source: 来源/2026-06-12-背叛（OCR 扫描版 15章）、来源/2026-06-12-天幕红尘（OCR 版 51章）；引文全部 grep 逐字核验+章节定位核验
+- Created entity: 著作/《背叛》、著作/《天幕红尘》
+- Created concept: 概念/坦然、概念/输血与造血
+- Created argument: 论证/道德熔点论证
+- Created analysis: 分析/天道三部曲思想演化（内部演化弧：毁灭→孤独→殉道）
+- Updated: 豆豆（+2 著作）、得救之道（+develops 输血与造血、三部曲演化节）、历史唯物主义（天幕红尘小说化阐释）
+- Relations: +20条
+- Facts(T2): 救世主情结三部曲首现判定、弱势文化诗化前身判定、历史唯物主义天幕红尘姿态判定（3条）
+- Events(T4): 2013-天幕红尘出版
+- Conflicts: none
