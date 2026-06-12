@@ -129,13 +129,13 @@ html body.obsidian-app .markdown-preview-view.dashboard .markdown-preview-pusher
 
 /* ── 飞轮 ── */
 .dashboard .bw .fly { padding: 6px 0; }
-.dashboard .bw .step { display: grid; grid-template-columns: 56px 22px 1fr auto; gap: 0 10px; padding: 9px 16px; align-items: baseline; border-top: 1px dashed var(--hair); }
+.dashboard .bw .step { display: grid; grid-template-columns: 56px 22px 1fr minmax(0, 160px); gap: 0 10px; padding: 9px 16px; align-items: baseline; border-top: 1px dashed var(--hair); }
 .dashboard .bw .step:first-child { border-top: none; }
 .dashboard .bw .step .t { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); }
 .dashboard .bw .step .mark { font-family: var(--mono); font-size: .8rem; text-align: center; }
 .dashboard .bw .step .what { font-size: .84rem; }
 .dashboard .bw .step .what small { color: var(--ink-3); font-size: .73rem; margin-left: 6px; }
-.dashboard .bw .step .n { font-family: var(--mono); font-size: .74rem; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dashboard .bw .step .n { font-family: var(--mono); font-size: .74rem; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
 .dashboard .bw .step.fail { background: var(--red-soft); }
 .dashboard .bw .step.fail .what { font-weight: 700; }
 .dashboard .bw .runmeta { padding: 8px 16px 10px; border-top: 1px solid var(--hair); font-family: var(--mono); font-size: .68rem; color: var(--ink-3); }
@@ -364,3 +364,25 @@ html body.obsidian-app .markdown-preview-view.dashboard {
 .dashboard .bw .a-tgl .tgl { font-family: var(--mono); font-size: .66rem; border: 1px solid var(--hair-2); padding: 1px 7px; color: var(--ink-3); cursor: pointer; white-space: nowrap; }
 .dashboard .bw .a-tgl .tgl:hover { border-color: var(--orange); color: var(--orange); }
 .dashboard .bw .tk[data-tline]:hover { color: var(--orange); }
+
+/* ── v6.3 · 知识跟踪条（争议悬置，仅在 contested > 0 时渲染）── */
+.dashboard .bw .watchbar {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 5px 22px; padding: 9px 14px;
+  border-left: 3px solid var(--amber);
+  background: rgba(181,133,27,.05);
+  margin-bottom: 8px;
+}
+.dashboard .bw .watchbar .wlbl {
+  font-family: var(--mono); font-size: .63rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--amber); white-space: nowrap;
+}
+.dashboard .bw .watchitem {
+  display: inline-flex; align-items: baseline; gap: 7px; cursor: pointer;
+}
+.dashboard .bw .watchitem:hover .wname { color: var(--orange); }
+.dashboard .bw .wname {
+  font-size: .78rem; font-weight: 700; color: var(--ink);
+  text-decoration: underline; text-decoration-color: var(--amber); text-underline-offset: 2px;
+}
+.dashboard .bw .wcrux { font-size: .72rem; color: var(--ink-3); }
