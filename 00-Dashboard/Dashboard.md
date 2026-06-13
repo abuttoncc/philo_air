@@ -14,9 +14,8 @@ const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const cut = (s, n) => { s = String(s ?? ""); return s.length > n ? s.slice(0, n) + "…" : s; };
 const fmtD = d => d && d.toFormat ? d.toFormat("MM-dd") : (d ? String(d) : "—");
 
-// 本体（全域）
-const HUBS = new Set(["形而上学", "认识论", "伦理学"]);
-const nodes = dv.pages('"wiki"').where(p => p.type && p.type != "ontology" && p.type != "registry" && !p.file.name.startsWith("_") && !HUBS.has(p.file.name) && p.file.name != "log").array();
+// 本体（全域）—— hub 页一律 type:ontology，已被 type 过滤排除，无需按域名写白名单
+const nodes = dv.pages('"wiki"').where(p => p.type && p.type != "ontology" && p.type != "registry" && !p.file.name.startsWith("_") && p.file.name != "log").array();
 const edges = nodes.reduce((s, p) => s + ((p.relations || []).length), 0);
 const LABELS = new Set(["问题", "应用议题", "义务论", "后果主义", "美德伦理", "一元论", "二元论"]);
 const contestedNodes = nodes.filter(p => p.confidence == "contested" || p.confidence == "low");
@@ -33,6 +32,10 @@ for (const p of nodes) for (const l of (p.file.outlinks || [])) {
 const defects = contested + noSrc + orphan + broken;
 const ORDER = ["人物", "学派", "著作", "概念", "论证", "事件", "分析", "来源"];
 const cnt = {}; for (const p of nodes) { const s = p.file.folder.split("/").pop(); cnt[s] = (cnt[s] || 0) + 1; }
+// 域：从节点路径 wiki/{domain}/… 动态推断（不写死域数与域名）
+const domainSlugs = [...new Set(nodes.map(p => p.file.path.split("/")[1]).filter(Boolean))].sort();
+const nDomains = domainSlugs.length;
+const domainsUpper = domainSlugs.map(s => s.toUpperCase()).join(" / ");
 
 // Inbox
 const pendInbox = dv.pages('"Inbox"').where(p => p.file.name !== "README" && p.file.name !== "plan" && p.compiled !== true).array();
@@ -151,12 +154,12 @@ const WD = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "S
 const greet = period + " · " + now.getFullYear() + "." + pad(now.getMonth() + 1) + "." + pad(now.getDate()) + " " + WD[now.getDay()];
 const typesHtml = ORDER.filter(k => cnt[k]).map(k => '<span class="ht" data-search="path:' + k + '/" title="搜索 ' + k + '/ 下全部节点">' + k + ' <b>' + cnt[k] + '</b></span>').join("");
 const healthChip = defects > 0 ? '<span class="hchip warn">待治理 ' + defects + '</span>' : '<span class="hchip ok">健康 · 无断链 / 孤儿 / 争议</span>';
-const NAV = [["知识本体", "wiki/metaphysics/形而上学"], ["自动化", "08-Ops/README"], ["问答库", "07-QA/README"], ["收集箱", "Inbox/README"], ["日记", "05-Daily/" + todayStr], ["MOC", "00-Dashboard/MOC"]];
+const NAV = [["知识本体", "wiki/_index"], ["自动化", "08-Ops/README"], ["问答库", "07-QA/README"], ["收集箱", "Inbox/README"], ["日记", "05-Daily/" + todayStr], ["MOC", "00-Dashboard/MOC"]];
 const navHtml = '<div class="navlinks">' + NAV.map(([nm, h]) => '<a data-href="' + h + '">' + nm + '</a>').join('<span class="sep">·</span>') + '</div>';
 const mast = '<header class="mast rv rv1">'
   + '<div class="brand"><div class="big">PHILO <em>VAULT</em></div>'
   + '<div class="subline"><span class="bbadge">THE BURROW</span><span class="greet">' + greet + '</span><span class="morning">近一日 <b data-href="' + (lastRun ? lastRun.file.path : "08-Ops/README") + '">' + nRecent + '</b> 个 agent 运行，<b data-href="08-Ops/review/README">' + cands.length + '</b> 项例外待裁决，<b data-href="08-Ops/README">' + nAnomaly + '</b> 个 agent 异常</span></div></div>'
-  + '<div class="mast-mid"><div class="mlbl">本体 · 全域构成（METAPHYSICS / EPISTEMOLOGY / ETHICS）</div><div class="types">' + typesHtml + '</div></div>'
+  + '<div class="mast-mid"><div class="mlbl">本体 · 全域构成（' + domainsUpper + '）</div><div class="types">' + typesHtml + '</div></div>'
   + '<div class="head-right">' + navHtml + '<div class="hr-bot">' + healthChip + '<span class="date">' + dateLine + '</span></div></div></header>';
 const ranToday = runs.some(r => r.routine == "daily-routine" && r.started && r.started.toFormat && r.started.toFormat("yyyy-MM-dd") == todayStr);
 const dueQ = dv.pages('"07-QA"').where(q => q.type == "qa" && q.mode == "dynamic" && q.status == "due").array().length;
@@ -171,7 +174,7 @@ const navrow = '<div class="navrow rv rv2">'
 
 const ncell = (href, lbl, val, sub) => '<div class="ncell" data-href="' + href + '"><div class="lbl">' + lbl + '</div><div class="val">' + val + '</div><div class="sub">' + sub + '</div></div>';
 const nstrip = '<div class="nstrip rv rv2">'
-  + ncell("00-Dashboard/MOC", "本体节点", String(nodes.length), "边 " + edges + " · 域 3")
+  + ncell("00-Dashboard/MOC", "本体节点", String(nodes.length), "边 " + edges + " · 域 " + nDomains)
   + ncell("wiki/_index", "健康缺陷", defects > 0 ? '<span style="color:var(--amber)">' + defects + '</span>' : "0", '<span class="dot ' + (defects > 0 ? "a" : "g") + '"></span>断链 ' + broken + ' · 孤儿 ' + orphan + ' · 缺源 ' + noSrc + ' · 争议 ' + contested)
   + ncell("Inbox/README", "待消化", pendInbox.length + ' <small>篇</small>', '<span class="dot ' + (oldest >= 3 || pendInbox.length >= 5 ? "r" : pendInbox.length ? "a" : "g") + '"></span>最老 ' + oldest + ' 天（≥3 天红灯）')
   + ncell("08-Ops/review/README", "待裁决", cands.length > 0 ? '<span style="color:var(--red)">' + cands.length + '</span>' : "0", '<span class="dot ' + (cands.length ? "r pulse" : "g") + '"></span>例外优先 · 结果记入审批账本')
