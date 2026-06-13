@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiki Report: capital-allocation</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Noto Sans SC", sans-serif; background: #f0f2f5; color: #1a1a1a; height: 100vh; overflow: hidden; }
+
+  .layout { display: flex; height: 100vh; }
+
+  /* ── Left: header + cards + graph ── */
+  .left { flex: 0 0 55%; display: flex; flex-direction: column; height: 100vh; border-right: 1px solid #e0e0e0; }
+  .left-header { padding: 16px 20px 0; flex-shrink: 0; }
+  h1 { font-size: 18px; font-weight: 600; color: #111; }
+  .subtitle { color: #999; font-size: 12px; margin-top: 2px; }
+  .cards { display: flex; gap: 8px; padding: 12px 20px 0; flex-shrink: 0; }
+  .card { background: #fff; border-radius: 6px; padding: 8px 14px; border: 1px solid #e0e0e0; flex: 1; min-width: 0; }
+  .card .num { font-size: 20px; font-weight: 700; color: #111; }
+  .card .label { font-size: 10px; color: #aaa; margin-top: 1px; text-transform: uppercase; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; padding: 10px 20px 6px; flex-shrink: 0; }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #888; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .graph-container { flex: 1; min-height: 0; margin: 0 12px 12px; background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; }
+
+  /* ── Right: node detail + tables ── */
+  .right { flex: 0 0 45%; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .right-scroll { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .right-scroll::-webkit-scrollbar { width: 4px; }
+  .right-scroll::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
+
+  /* ── Node detail ── */
+  .node-detail { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; overflow: hidden; flex-shrink: 0; display: none; }
+  .node-detail.active { display: block; }
+  .nd-header { padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+  .nd-header h3 { font-size: 14px; font-weight: 600; }
+  .nd-close { cursor: pointer; color: #aaa; font-size: 16px; padding: 0 4px; }
+  .nd-close:hover { color: #333; }
+  .nd-body { padding: 12px 14px; font-size: 12px; color: #555; line-height: 1.7; }
+  .nd-body b { color: #333; }
+  .nd-section { margin-top: 8px; }
+  .nd-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #f5f5f5; }
+  .nd-row:last-child { border-bottom: none; }
+  .nd-key { color: #888; }
+  .nd-val { font-weight: 600; color: #111; }
+  .nd-rel { padding: 2px 0; }
+  .nd-rel-arrow { color: #bbb; margin: 0 4px; }
+
+  /* ── Panel ── */
+  .panel { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; overflow: hidden; flex-shrink: 0; }
+  .panel-header { padding: 9px 14px; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; background: #fafafa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+  .panel-count { background: #eee; color: #666; padding: 1px 6px; border-radius: 3px; font-size: 10px; }
+
+  /* ── Table ── */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 7px 12px; font-size: 10px; color: #aaa; font-weight: 600; text-transform: uppercase; }
+  td { padding: 6px 12px; font-size: 12px; border-top: 1px solid #f3f3f3; }
+  .r { text-align: right; }
+  tr:hover td { background: #f8f9fb; }
+
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+  .badge-high { background: #dcfce7; color: #166534; }
+  .badge-medium { background: #fef9c3; color: #854d0e; }
+  .badge-low { background: #fee2e2; color: #991b1b; }
+  .badge-contested { background: #f3e8ff; color: #7c3aed; }
+  .badge-entity { background: #dbeafe; color: #1e40af; }
+  .badge-concept { background: #ede9fe; color: #5b21b6; }
+  .badge-source { background: #dcfce7; color: #166534; }
+  .badge-analysis { background: #ffedd5; color: #9a3412; }
+  .badge-mental-model { background: #fce7f3; color: #be185d; }
+  .badge-orphan { background: #fee2e2; color: #991b1b; }
+  .badge-missing { background: #fef9c3; color: #854d0e; }
+  .empty { color: #ccc; font-style: italic; padding: 14px; text-align: center; font-size: 12px; }
+
+  /* ── Hint overlay on graph ── */
+  .graph-hint { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #bbb; pointer-events: none; transition: opacity 0.3s; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── LEFT ── -->
+  <div class="left">
+    <div class="left-header">
+      <h1>capital-allocation</h1>
+      <div class="subtitle">资本配置与商业判断：CEO 资本配置五选项、高质量企业要素、竞争优势模式、投资决策框架 · domain · 39 pages</div>
+    </div>
+    <div class="cards" id="cards"></div>
+    <div class="legend" id="legend"></div>
+    <div class="graph-container" id="graph" style="position:relative;">
+      <div class="graph-hint" id="graph-hint">click a node to inspect</div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT ── -->
+  <div class="right">
+    <div class="right-scroll">
+      <div class="node-detail" id="node-detail">
+        <div class="nd-header">
+          <h3 id="nd-title"></h3>
+          <span class="nd-close" id="nd-close">&times;</span>
+        </div>
+        <div class="nd-body" id="nd-body"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">Data Points <span class="panel-count" id="dp-count"></span></div>
+        <div id="data-table"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">Pages <span class="panel-count" id="pg-count"></span></div>
+        <div id="freshness-table"></div>
+      </div>
+      <div class="panel" id="contested-panel" style="display:none">
+        <div class="panel-header">Contested <span class="panel-count" id="ct-count"></span></div>
+        <div id="contested-list"></div>
+      </div>
+      <div class="panel" id="coverage-panel" style="display:none">
+        <div class="panel-header">Coverage Gaps <span class="panel-count" id="cg-count"></span></div>
+        <div id="coverage-table"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {"name": "capital-allocation", "ontology_type": "domain", "description": "资本配置与商业判断：CEO 资本配置五选项、高质量企业要素、竞争优势模式、投资决策框架", "seed": "", "total_pages": 39, "type_counts": {"event": 1, "entity": 20, "analysis": 1, "source": 2, "concept": 15}, "confidence_counts": {"medium": 27, "high": 12}, "contested_pages": [], "nodes": [{"id": "2012-巴菲特推荐《局外人》", "label": "2012-巴菲特推荐《局外人》", "type": "event", "subtype": "", "color": "#D9A406", "confidence": "medium", "updated": "2026-06-13", "path": "事件/2012-巴菲特推荐《局外人》.md"}, {"id": "亨利·辛格尔顿", "label": "亨利·辛格尔顿", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/亨利·辛格尔顿.md"}, {"id": "凯瑟琳·格雷厄姆", "label": "凯瑟琳·格雷厄姆", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/凯瑟琳·格雷厄姆.md"}, {"id": "劳伦斯·坎宁安", "label": "劳伦斯·坎宁安", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/劳伦斯·坎宁安.md"}, {"id": "威廉·桑代克", "label": "威廉·桑代克", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/威廉·桑代克.md"}, {"id": "比尔·安德斯", "label": "比尔·安德斯", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/比尔·安德斯.md"}, {"id": "比尔·斯蒂里茨", "label": "比尔·斯蒂里茨", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/比尔·斯蒂里茨.md"}, {"id": "汤姆·墨菲", "label": "汤姆·墨菲", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/汤姆·墨菲.md"}, {"id": "沃伦·巴菲特", "label": "沃伦·巴菲特", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/沃伦·巴菲特.md"}, {"id": "约翰·马龙", "label": "约翰·马龙", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/约翰·马龙.md"}, {"id": "迪克·史密斯", "label": "迪克·史密斯", "type": "entity", "subtype": "person", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "人物/迪克·史密斯.md"}, {"id": "TCI", "label": "TCI", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/TCI.md"}, {"id": "伯克希尔·哈撒韦", "label": "伯克希尔·哈撒韦", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/伯克希尔·哈撒韦.md"}, {"id": "华盛顿邮报公司", "label": "华盛顿邮报公司", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/华盛顿邮报公司.md"}, {"id": "特利丹", "label": "特利丹", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/特利丹.md"}, {"id": "罗尔斯顿·普瑞纳", "label": "罗尔斯顿·普瑞纳", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/罗尔斯顿·普瑞纳.md"}, {"id": "通用动力", "label": "通用动力", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/通用动力.md"}, {"id": "通用影院", "label": "通用影院", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/通用影院.md"}, {"id": "首府广播", "label": "首府广播", "type": "entity", "subtype": "company", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "公司/首府广播.md"}, {"id": "资本配置与质量投资框架综述", "label": "资本配置与质量投资框架综述", "type": "analysis", "subtype": "", "color": "#8B8B8B", "confidence": "medium", "updated": "2026-06-13", "path": "分析/资本配置与质量投资框架综述.md"}, {"id": "2026-06-13-局外人-GitHub笔记", "label": "《局外人》GitHub 最佳笔记（双源）", "type": "source", "subtype": "", "color": "#B8B8B8", "confidence": "medium", "updated": "2026-06-13", "path": "来源/2026-06-13-局外人-GitHub笔记.md"}, {"id": "2026-06-13-高质量投资-GitHub笔记", "label": "《高质量投资》GitHub 最佳笔记", "type": "source", "subtype": "", "color": "#B8B8B8", "confidence": "medium", "updated": "2026-06-13", "path": "来源/2026-06-13-高质量投资-GitHub笔记.md"}, {"id": "特利丹回购案例", "label": "特利丹回购案例", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "medium", "updated": "2026-06-13", "path": "案例/特利丹回购案例.md"}, {"id": "通用动力收缩案例", "label": "通用动力收缩案例", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "medium", "updated": "2026-06-13", "path": "案例/通用动力收缩案例.md"}, {"id": "首府广播并购ABC案例", "label": "首府广播并购ABC案例", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "medium", "updated": "2026-06-13", "path": "案例/首府广播并购ABC案例.md"}, {"id": "去中心化经营", "label": "去中心化经营", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/去中心化经营.md"}, {"id": "品牌力", "label": "品牌力", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/品牌力.md"}, {"id": "增长来源", "label": "增长来源", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/增长来源.md"}, {"id": "定价权", "label": "定价权", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/定价权.md"}, {"id": "局外人清单", "label": "局外人清单", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/局外人清单.md"}, {"id": "竞争优势模式", "label": "竞争优势模式", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/竞争优势模式.md"}, {"id": "经常性收入", "label": "经常性收入", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/经常性收入.md"}, {"id": "股票回购", "label": "股票回购", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/股票回购.md"}, {"id": "质量投资陷阱", "label": "质量投资陷阱", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/质量投资陷阱.md"}, {"id": "资本回报", "label": "资本回报", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/资本回报.md"}, {"id": "资本配置五选项", "label": "资本配置五选项", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/资本配置五选项.md"}, {"id": "高质量投资", "label": "高质量投资", "type": "concept", "subtype": "", "color": "#2DA44E", "confidence": "high", "updated": "2026-06-13", "path": "概念/高质量投资.md"}, {"id": "《局外人》", "label": "《局外人》", "type": "entity", "subtype": "work", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "著作/《局外人》.md"}, {"id": "《高质量投资》", "label": "《高质量投资》", "type": "entity", "subtype": "work", "color": "#4A90D9", "confidence": "medium", "updated": "2026-06-13", "path": "著作/《高质量投资》.md"}], "edges": [{"from": "亨利·辛格尔顿", "to": "局外人CEO", "label": "classified_as"}, {"from": "凯瑟琳·格雷厄姆", "to": "局外人CEO", "label": "classified_as"}, {"from": "比尔·安德斯", "to": "局外人CEO", "label": "classified_as"}, {"from": "比尔·斯蒂里茨", "to": "局外人CEO", "label": "classified_as"}, {"from": "汤姆·墨菲", "to": "局外人CEO", "label": "classified_as"}, {"from": "沃伦·巴菲特", "to": "局外人CEO", "label": "classified_as"}, {"from": "约翰·马龙", "to": "局外人CEO", "label": "classified_as"}, {"from": "迪克·史密斯", "to": "局外人CEO", "label": "classified_as"}, {"from": "TCI", "to": "约翰·马龙", "label": "led_by"}, {"from": "伯克希尔·哈撒韦", "to": "沃伦·巴菲特", "label": "led_by"}, {"from": "华盛顿邮报公司", "to": "凯瑟琳·格雷厄姆", "label": "led_by"}, {"from": "特利丹", "to": "亨利·辛格尔顿", "label": "led_by"}, {"from": "罗尔斯顿·普瑞纳", "to": "比尔·斯蒂里茨", "label": "led_by"}, {"from": "通用动力", "to": "比尔·安德斯", "label": "led_by"}, {"from": "通用影院", "to": "迪克·史密斯", "label": "led_by"}, {"from": "首府广播", "to": "汤姆·墨菲", "label": "led_by"}, {"from": "资本配置与质量投资框架综述", "to": "局外人清单", "label": "references"}, {"from": "资本配置与质量投资框架综述", "to": "高质量投资", "label": "references"}, {"from": "资本配置与质量投资框架综述", "to": "资本配置五选项", "label": "references"}, {"from": "资本配置与质量投资框架综述", "to": "竞争优势模式", "label": "references"}, {"from": "资本配置与质量投资框架综述", "to": "质量投资陷阱", "label": "references"}, {"from": "特利丹回购案例", "to": "股票回购", "label": "exemplifies"}, {"from": "特利丹回购案例", "to": "特利丹", "label": "involves"}, {"from": "特利丹回购案例", "to": "亨利·辛格尔顿", "label": "involves"}, {"from": "特利丹回购案例", "to": "《局外人》", "label": "appears_in"}, {"from": "通用动力收缩案例", "to": "局外人清单", "label": "exemplifies"}, {"from": "通用动力收缩案例", "to": "通用动力", "label": "involves"}, {"from": "通用动力收缩案例", "to": "比尔·安德斯", "label": "involves"}, {"from": "通用动力收缩案例", "to": "《局外人》", "label": "appears_in"}, {"from": "首府广播并购ABC案例", "to": "资本配置五选项", "label": "exemplifies"}, {"from": "首府广播并购ABC案例", "to": "首府广播", "label": "involves"}, {"from": "首府广播并购ABC案例", "to": "汤姆·墨菲", "label": "involves"}, {"from": "首府广播并购ABC案例", "to": "《局外人》", "label": "appears_in"}, {"from": "去中心化经营", "to": "《局外人》", "label": "appears_in"}, {"from": "去中心化经营", "to": "组织模式", "label": "classified_as"}, {"from": "品牌力", "to": "竞争优势模式", "label": "part_of"}, {"from": "增长来源", "to": "高质量投资", "label": "part_of"}, {"from": "定价权", "to": "竞争优势模式", "label": "part_of"}, {"from": "局外人清单", "to": "威廉·桑代克", "label": "proposed_by"}, {"from": "局外人清单", "to": "《局外人》", "label": "appears_in"}, {"from": "局外人清单", "to": "判断框架", "label": "classified_as"}, {"from": "竞争优势模式", "to": "高质量投资", "label": "part_of"}, {"from": "经常性收入", "to": "竞争优势模式", "label": "part_of"}, {"from": "股票回购", "to": "资本配置五选项", "label": "part_of"}, {"from": "质量投资陷阱", "to": "高质量投资", "label": "part_of"}, {"from": "资本回报", "to": "高质量投资", "label": "part_of"}, {"from": "资本配置五选项", "to": "《局外人》", "label": "appears_in"}, {"from": "资本配置五选项", "to": "资本配置", "label": "part_of"}, {"from": "高质量投资", "to": "《高质量投资》", "label": "appears_in"}, {"from": "高质量投资", "to": "投资框架", "label": "classified_as"}, {"from": "《局外人》", "to": "威廉·桑代克", "label": "authored_by"}, {"from": "《高质量投资》", "to": "劳伦斯·坎宁安", "label": "authored_by"}], "data_rows": [{"page": "TCI", "slug": "TCI", "field": "年化股东回报率", "value": 30.3, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "伯克希尔·哈撒韦", "slug": "伯克希尔·哈撒韦", "field": "年化股东回报率", "value": 20.7, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "华盛顿邮报公司", "slug": "华盛顿邮报公司", "field": "年化股东回报率", "value": 18.9, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "特利丹", "slug": "特利丹", "field": "年化股东回报率", "value": 20.4, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "特利丹", "slug": "特利丹", "field": "累计回购流通股比例", "value": 90.0, "unit": "%", "period": "辛格尔顿任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "罗尔斯顿·普瑞纳", "slug": "罗尔斯顿·普瑞纳", "field": "年化股东回报率", "value": 20.0, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "通用动力", "slug": "通用动力", "field": "年化股东回报率", "value": 23.3, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "通用影院", "slug": "通用影院", "field": "年化股东回报率", "value": 16.1, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "首府广播", "slug": "首府广播", "field": "年化股东回报率", "value": 19.9, "unit": "%", "period": "CEO任期", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}, {"page": "首府广播", "slug": "首府广播", "field": "收购ABC对价", "value": 3.5, "unit": "十亿美元", "period": "笔记未注明年份", "source": "2026-06-13-局外人-GitHub笔记", "verified": 0, "confidence": "medium"}], "freshness": [{"slug": "2012-巴菲特推荐《局外人》", "updated": "2026-06-13", "type": "event"}, {"slug": "亨利·辛格尔顿", "updated": "2026-06-13", "type": "entity"}, {"slug": "凯瑟琳·格雷厄姆", "updated": "2026-06-13", "type": "entity"}, {"slug": "劳伦斯·坎宁安", "updated": "2026-06-13", "type": "entity"}, {"slug": "威廉·桑代克", "updated": "2026-06-13", "type": "entity"}, {"slug": "比尔·安德斯", "updated": "2026-06-13", "type": "entity"}, {"slug": "比尔·斯蒂里茨", "updated": "2026-06-13", "type": "entity"}, {"slug": "汤姆·墨菲", "updated": "2026-06-13", "type": "entity"}, {"slug": "沃伦·巴菲特", "updated": "2026-06-13", "type": "entity"}, {"slug": "约翰·马龙", "updated": "2026-06-13", "type": "entity"}, {"slug": "迪克·史密斯", "updated": "2026-06-13", "type": "entity"}, {"slug": "TCI", "updated": "2026-06-13", "type": "entity"}, {"slug": "伯克希尔·哈撒韦", "updated": "2026-06-13", "type": "entity"}, {"slug": "华盛顿邮报公司", "updated": "2026-06-13", "type": "entity"}, {"slug": "特利丹", "updated": "2026-06-13", "type": "entity"}, {"slug": "罗尔斯顿·普瑞纳", "updated": "2026-06-13", "type": "entity"}, {"slug": "通用动力", "updated": "2026-06-13", "type": "entity"}, {"slug": "通用影院", "updated": "2026-06-13", "type": "entity"}, {"slug": "首府广播", "updated": "2026-06-13", "type": "entity"}, {"slug": "资本配置与质量投资框架综述", "updated": "2026-06-13", "type": "analysis"}, {"slug": "2026-06-13-局外人-GitHub笔记", "updated": "2026-06-13", "type": "source"}, {"slug": "2026-06-13-高质量投资-GitHub笔记", "updated": "2026-06-13", "type": "source"}, {"slug": "特利丹回购案例", "updated": "2026-06-13", "type": "concept"}, {"slug": "通用动力收缩案例", "updated": "2026-06-13", "type": "concept"}, {"slug": "首府广播并购ABC案例", "updated": "2026-06-13", "type": "concept"}, {"slug": "去中心化经营", "updated": "2026-06-13", "type": "concept"}, {"slug": "品牌力", "updated": "2026-06-13", "type": "concept"}, {"slug": "增长来源", "updated": "2026-06-13", "type": "concept"}, {"slug": "定价权", "updated": "2026-06-13", "type": "concept"}, {"slug": "局外人清单", "updated": "2026-06-13", "type": "concept"}, {"slug": "竞争优势模式", "updated": "2026-06-13", "type": "concept"}, {"slug": "经常性收入", "updated": "2026-06-13", "type": "concept"}, {"slug": "股票回购", "updated": "2026-06-13", "type": "concept"}, {"slug": "质量投资陷阱", "updated": "2026-06-13", "type": "concept"}, {"slug": "资本回报", "updated": "2026-06-13", "type": "concept"}, {"slug": "资本配置五选项", "updated": "2026-06-13", "type": "concept"}, {"slug": "高质量投资", "updated": "2026-06-13", "type": "concept"}, {"slug": "《局外人》", "updated": "2026-06-13", "type": "entity"}, {"slug": "《高质量投资》", "updated": "2026-06-13", "type": "entity"}], "coverage_gaps": [{"slug": "资本配置与质量投资框架综述", "issue": "orphan", "detail": "零入链（无其他页面引用）"}, {"slug": "局外人CEO", "issue": "missing", "detail": "被引用 8 次但页面不存在"}], "positions": {"2012-巴菲特推荐《局外人》": {"x": 1570.9, "y": 932, "layer": 4, "pe": [0.0571, -0.9984, 0.0, 1.0, -0.114, 0.9935, 0.0, 1.0, -0.2265, 0.974, 0.0, 1.0, -0.4412, 0.8974, 0.0, 1.0]}, "资本配置与质量投资框架综述": {"x": 417.0, "y": 1172, "layer": 5, "pe": [0.7303, 0.6831, 0.9951, 0.0984, 0.9978, -0.0668, 0.1959, -0.9806, -0.1333, -0.9911, -0.3841, 0.9233, 0.2642, 0.9645, -0.7093, 0.7049]}, "2026-06-13-局外人-GitHub笔记": {"x": 1770.9, "y": 1228, "layer": 5, "pe": [0.3293, 0.9442, 0.0, 1.0, 0.6219, 0.7831, 0.0, 1.0, 0.974, 0.2265, 0.0, 1.0, 0.4412, -0.8974, 0.0, 1.0]}, "2026-06-13-高质量投资-GitHub笔记": {"x": 1970.9, "y": 1172, "layer": 5, "pe": [0.6656, 0.7463, 0.0, 1.0, 0.9935, 0.114, 0.0, 1.0, 0.2265, -0.974, 0.0, 1.0, -0.4412, 0.8974, 0.0, 1.0]}, "《高质量投资》": {"x": 336.6, "y": 452, "layer": 2, "pe": [0.6139, 0.7894, 0.5384, 0.8427, 0.9692, 0.2463, 0.9075, 0.4202, 0.4775, -0.8787, 0.7625, -0.6469, -0.839, 0.5441, -0.9866, -0.1629]}, "劳伦斯·坎宁安": {"x": 476.0, "y": 508, "layer": 2, "pe": [0.8044, 0.5941, 0.6731, 0.7395, 0.9558, -0.2941, 0.9956, 0.0937, -0.5622, -0.827, 0.1867, -0.9824, 0.9299, 0.3679, -0.3668, 0.9303]}, "威廉·桑代克": {"x": 873.1, "y": 452, "layer": 2, "pe": [0.9897, -0.1431, 0.7006, -0.7136, -0.2833, -0.959, -0.9998, 0.0184, 0.5433, 0.8395, -0.0367, -0.9993, 0.9123, 0.4096, 0.0734, 0.9973]}, "《局外人》": {"x": 956.7, "y": 508, "layer": 2, "pe": [0.9531, -0.3028, 0.0, -1.0, -0.5772, -0.8166, -0.0, 1.0, 0.9427, 0.3338, -0.0, 1.0, 0.6293, -0.7772, -0.0, 1.0]}, "通用动力": {"x": 1015.1, "y": 452, "layer": 2, "pe": [0.9121, -0.41, 0.9603, -0.279, -0.7479, -0.6638, -0.5359, -0.8443, 0.9929, -0.1187, 0.9049, 0.4257, -0.2357, -0.9718, 0.7704, -0.6376]}, "首府广播": {"x": 1020.9, "y": 508, "layer": 2, "pe": [0.9074, -0.4203, 0.9707, -0.2403, -0.7628, -0.6466, -0.4665, -0.8845, 0.9865, -0.1637, 0.8253, 0.5647, -0.323, -0.9464, 0.9321, -0.3622]}, "特利丹": {"x": 1050.2, "y": 452, "layer": 2, "pe": [0.8817, -0.4717, 0.9638, -0.2665, -0.8319, -0.5549, -0.5138, -0.8579, 0.9233, -0.3841, 0.8816, 0.472, -0.7093, -0.7049, 0.8323, -0.5544]}, "比尔·安德斯": {"x": 1102.1, "y": 508, "layer": 2, "pe": [0.8292, -0.5589, 0.9999, -0.0159, -0.9269, -0.3752, -0.0318, -0.9995, 0.6956, -0.7184, 0.0635, 0.998, -0.9995, 0.0323, 0.1268, 0.9919]}, "汤姆·墨菲": {"x": 1107.4, "y": 452, "layer": 2, "pe": [0.8233, -0.5676, 0.9998, 0.0213, -0.9346, -0.3557, 0.0426, -0.9991, 0.6649, -0.7469, -0.0851, 0.9964, -0.9933, 0.1158, -0.1697, 0.9855]}, "TCI": {"x": 1131.7, "y": 508, "layer": 2, "pe": [0.7953, -0.6062, 0.5171, 0.8559, -0.9642, -0.2651, 0.8852, 0.4652, 0.5113, -0.8594, 0.8236, -0.5672, -0.8788, 0.4771, -0.9343, -0.3566]}, "伯克希尔·哈撒韦": {"x": 1131.7, "y": 452, "layer": 2, "pe": [0.7953, -0.6062, 0.5171, 0.8559, -0.9642, -0.2651, 0.8852, 0.4652, 0.5113, -0.8594, 0.8236, -0.5672, -0.8788, 0.4771, -0.9343, -0.3566]}, "华盛顿邮报公司": {"x": 1131.7, "y": 508, "layer": 2, "pe": [0.7953, -0.6062, 0.5171, 0.8559, -0.9642, -0.2651, 0.8852, 0.4652, 0.5113, -0.8594, 0.8236, -0.5672, -0.8788, 0.4771, -0.9343, -0.3566]}, "罗尔斯顿·普瑞纳": {"x": 1131.7, "y": 452, "layer": 2, "pe": [0.7953, -0.6062, 0.5171, 0.8559, -0.9642, -0.2651, 0.8852, 0.4652, 0.5113, -0.8594, 0.8236, -0.5672, -0.8788, 0.4771, -0.9343, -0.3566]}, "通用影院": {"x": 1131.7, "y": 508, "layer": 2, "pe": [0.7953, -0.6062, 0.5171, 0.8559, -0.9642, -0.2651, 0.8852, 0.4652, 0.5113, -0.8594, 0.8236, -0.5672, -0.8788, 0.4771, -0.9343, -0.3566]}, "亨利·辛格尔顿": {"x": 1134.4, "y": 452, "layer": 2, "pe": [0.7921, -0.6104, 1.0, -0.0039, -0.967, -0.2549, -0.0077, -1.0, 0.493, -0.87, 0.0154, 0.9999, -0.8578, 0.514, 0.0308, 0.9995]}, "凯瑟琳·格雷厄姆": {"x": 1225.1, "y": 508, "layer": 2, "pe": [0.6714, -0.7411, 0.3181, 0.9481, -0.9951, 0.0984, 0.6031, 0.7976, -0.1958, -0.9806, 0.9622, 0.2725, 0.384, 0.9233, 0.5243, -0.8515]}, "比尔·斯蒂里茨": {"x": 1225.1, "y": 452, "layer": 2, "pe": [0.6714, -0.7411, 0.3181, 0.9481, -0.9951, 0.0984, 0.6031, 0.7976, -0.1958, -0.9806, 0.9622, 0.2725, 0.384, 0.9233, 0.5243, -0.8515]}, "沃伦·巴菲特": {"x": 1225.1, "y": 508, "layer": 2, "pe": [0.6714, -0.7411, 0.3181, 0.9481, -0.9951, 0.0984, 0.6031, 0.7976, -0.1958, -0.9806, 0.9622, 0.2725, 0.384, 0.9233, 0.5243, -0.8515]}, "约翰·马龙": {"x": 1225.1, "y": 452, "layer": 2, "pe": [0.6714, -0.7411, 0.3181, 0.9481, -0.9951, 0.0984, 0.6031, 0.7976, -0.1958, -0.9806, 0.9622, 0.2725, 0.384, 0.9233, 0.5243, -0.8515]}, "迪克·史密斯": {"x": 1225.1, "y": 508, "layer": 2, "pe": [0.6714, -0.7411, 0.3181, 0.9481, -0.9951, 0.0984, 0.6031, 0.7976, -0.1958, -0.9806, 0.9622, 0.2725, 0.384, 0.9233, 0.5243, -0.8515]}, "局外人CEO": {"x": 1490.9, "y": 452, "layer": 2, "pe": [0.2126, -0.9771, 0.0, 1.0, -0.4154, 0.9096, 0.0, 1.0, -0.7557, 0.6549, 0.0, 1.0, -0.9898, -0.1423, 0.0, 1.0]}, "高质量投资": {"x": 0.0, "y": -28, "layer": 0, "pe": [0.0, 1.0, 0.3787, 0.9255, 0.0, 1.0, 0.701, 0.7132, 0.0, 1.0, 0.9999, 0.0173, 0.0, 1.0, 0.0345, -0.9994]}, "竞争优势模式": {"x": 154.4, "y": 28, "layer": 0, "pe": [0.2985, 0.9544, 0.6142, 0.7891, 0.5699, 0.8217, 0.9694, 0.2455, 0.9366, 0.3505, 0.4759, -0.8795, 0.6566, -0.7543, -0.8371, 0.547]}, "质量投资陷阱": {"x": 477.3, "y": -28, "layer": 0, "pe": [0.8059, 0.5921, 0.901, 0.4338, 0.9543, -0.2989, 0.7818, -0.6236, -0.5704, -0.8214, -0.975, -0.2223, 0.937, 0.3493, 0.4335, -0.9011]}, "增长来源": {"x": 526.0, "y": 28, "layer": 0, "pe": [0.8587, 0.5125, 0.8253, 0.5647, 0.8801, -0.4747, 0.9321, -0.3623, -0.8356, -0.5493, -0.6753, -0.7375, 0.918, -0.3965, 0.9961, 0.088]}, "投资框架": {"x": 526.0, "y": -28, "layer": 0, "pe": [0.8587, 0.5125, 0.8253, 0.5647, 0.8801, -0.4747, 0.9321, -0.3623, -0.8356, -0.5493, -0.6753, -0.7375, 0.918, -0.3965, 0.9961, 0.088]}, "资本回报": {"x": 526.0, "y": 28, "layer": 0, "pe": [0.8587, 0.5125, 0.8253, 0.5647, 0.8801, -0.4747, 0.9321, -0.3623, -0.8356, -0.5493, -0.6753, -0.7375, 0.918, -0.3965, 0.9961, 0.088]}, "品牌力": {"x": 535.2, "y": -28, "layer": 0, "pe": [0.8679, 0.4967, 0.8569, 0.5155, 0.8622, -0.5065, 0.8835, -0.4685, -0.8734, -0.4869, -0.8277, -0.5611, 0.8506, -0.5258, 0.9289, -0.3703]}, "定价权": {"x": 535.2, "y": 28, "layer": 0, "pe": [0.8679, 0.4967, 0.8569, 0.5155, 0.8622, -0.5065, 0.8835, -0.4685, -0.8734, -0.4869, -0.8277, -0.5611, 0.8506, -0.5258, 0.9289, -0.3703]}, "经常性收入": {"x": 535.2, "y": -28, "layer": 0, "pe": [0.8679, 0.4967, 0.8569, 0.5155, 0.8622, -0.5065, 0.8835, -0.4685, -0.8734, -0.4869, -0.8277, -0.5611, 0.8506, -0.5258, 0.9289, -0.3703]}, "局外人清单": {"x": 808.0, "y": 28, "layer": 0, "pe": [0.9999, -0.0156, 0.4835, -0.8754, -0.0312, -0.9995, -0.8464, 0.5325, 0.0625, 0.998, -0.9014, -0.4329, 0.1247, 0.9922, 0.7805, -0.6252]}, "资本配置五选项": {"x": 832.7, "y": -28, "layer": 0, "pe": [0.9979, -0.0642, 0.5831, -0.8124, -0.1282, -0.9917, -0.9474, 0.32, 0.2543, 0.9671, -0.6063, -0.7952, 0.4919, 0.8707, 0.9643, 0.2648]}, "判断框架": {"x": 840.3, "y": 28, "layer": 0, "pe": [0.9969, -0.079, 0.899, -0.4379, -0.1575, -0.9875, -0.7873, -0.6165, 0.3111, 0.9504, 0.9708, -0.2398, 0.5913, 0.8065, -0.4656, -0.885]}, "资本配置": {"x": 851.8, "y": -28, "layer": 0, "pe": [0.9948, -0.1016, 0.9234, -0.3837, -0.2022, -0.9793, -0.7087, -0.7055, 0.396, 0.9182, 1.0, -0.0046, 0.7273, 0.6864, -0.0092, -1.0]}, "组织模式": {"x": 908.4, "y": 28, "layer": 0, "pe": [0.9774, -0.2112, 0.5651, -0.825, -0.4129, -0.9108, -0.9325, 0.3613, 0.7521, 0.6591, -0.6738, -0.7389, 0.9913, -0.1313, 0.9958, 0.0921]}, "去中心化经营": {"x": 922.5, "y": -28, "layer": 0, "pe": [0.9712, -0.2383, 0.3043, -0.9526, -0.4628, -0.8865, -0.5797, 0.8149, 0.8205, 0.5716, -0.9447, 0.328, 0.9381, -0.3464, -0.6197, -0.7849]}, "股票回购": {"x": 925.1, "y": 28, "layer": 0, "pe": [0.97, -0.2432, 0.8319, -0.5549, -0.4718, -0.8817, -0.9232, -0.3842, 0.832, 0.5547, 0.7094, -0.7048, 0.9231, -0.3845, -1.0, -0.0066]}, "通用动力收缩案例": {"x": 996.2, "y": -28, "layer": 0, "pe": [0.9267, -0.3758, 0.7302, -0.6832, -0.6966, -0.7175, -0.9978, -0.0665, 0.9996, 0.0296, 0.1327, -0.9912, 0.0592, -0.9982, -0.2631, 0.9648]}, "首府广播并购ABC案例": {"x": 1005.8, "y": 28, "layer": 0, "pe": [0.9195, -0.3931, 0.7685, -0.6399, -0.7229, -0.691, -0.9835, -0.1811, 0.999, -0.0452, 0.3561, -0.9344, -0.0903, -0.9959, -0.6655, 0.7464]}, "特利丹回购案例": {"x": 1053.9, "y": -28, "layer": 0, "pe": [0.8783, -0.4781, 0.7429, -0.6694, -0.8399, -0.5427, -0.9946, -0.1037, 0.9117, -0.4109, 0.2064, -0.9785, -0.7491, -0.6624, -0.4038, 0.9148]}}};
+
+// ── Cards ──
+const cardsEl = document.getElementById('cards');
+const cc = [
+  { num: DATA.total_pages, label: 'Pages' },
+  ...Object.entries(DATA.type_counts).map(([k,v]) => ({ num: v, label: k })),
+  { num: DATA.contested_pages.length, label: 'Contested' },
+  { num: DATA.edges.length, label: 'Relations' },
+];
+cardsEl.innerHTML = cc.map(c => `<div class="card"><div class="num">${c.num}</div><div class="label">${c.label}</div></div>`).join('');
+
+// ── Legend ──
+const cm = { '机构':'#E5484D', '工具':'#4A90D9', '指标':'#16A3A3', '机制':'#2DA44E', '事件':'#D9A406', '分析':'#8B8B8B', '来源':'#B8B8B8' };
+document.getElementById('legend').innerHTML = Object.entries(cm).map(([t,c]) =>
+  `<div class="legend-item"><div class="legend-dot" style="background:${c}"></div>${t}</div>`).join('');
+
+// ── Graph ──
+const hint = document.getElementById('graph-hint');
+let network = null;
+if (DATA.nodes.length > 0) {
+  // count connections per node for sizing
+  const connCount = {};
+  DATA.edges.forEach(e => { connCount[e.from] = (connCount[e.from]||0)+1; connCount[e.to] = (connCount[e.to]||0)+1; });
+  const maxConn = Math.max(1, ...Object.values(connCount));
+
+  const graphNodes = DATA.nodes.filter(n => n.type !== 'source').map(n => {
+    const c = connCount[n.id] || 0;
+    const sz = 14 + (c / maxConn) * 22;
+    return {
+      id: n.id, label: n.label,
+      color: { background: n.color, border: n.color, highlight: { background: '#fff', border: n.color } },
+      font: { color: '#333', size: Math.max(12, sz * 0.65), face: '-apple-system, "Noto Sans SC", sans-serif' },
+      shape: 'dot', size: sz,
+    };
+  });
+  const nodeIds = new Set(graphNodes.map(n => n.id));
+  DATA.edges.forEach(e => {
+    [e.to, e.from].forEach(id => {
+      if (!nodeIds.has(id)) {
+        graphNodes.push({ id, label: id, color:{ background:'#e0e0e0', border:'#ccc' }, font:{ color:'#999', size:11 }, shape:'dot', size:10 });
+        nodeIds.add(id);
+      }
+    });
+  });
+
+  // dedupe edges: same from→to pair, merge labels
+  const edgeMap = {};
+  DATA.edges.forEach(e => {
+    const key = e.from + '→' + e.to;
+    if (edgeMap[key]) { edgeMap[key].label += '\n' + e.label; }
+    else { edgeMap[key] = { ...e }; }
+  });
+  const graphEdges = Object.values(edgeMap).map((e,i) => ({
+    id: i, from: e.from, to: e.to, label: e.label,
+    color: { color:'#d0d0d0', highlight:'#888' },
+    font: { color:'#aaa', size:10, strokeWidth:3, strokeColor:'#fff', multi:'md', face:'monospace' },
+    arrows: { to:{ scaleFactor:0.5 } },
+    smooth: { type:'curvedCW', roundness: 0.18 },
+  }));
+
+  // ── 校准布局：position_encoding.py 的确定性坐标（y=本体层级, x=谱坐标） ──
+  const PE = DATA.positions || null;
+  let calibrated = !!PE;
+  const FORCE_PHYSICS = {
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: { gravitationalConstant: -80, springLength: 200, springConstant: 0.04, damping: 0.6 },
+    stabilization: { iterations: 150 },
+  };
+  if (PE) graphNodes.forEach(n => { const p = PE[n.id]; if (p) { n.x = p.x; n.y = p.y; } });
+
+  network = new vis.Network(document.getElementById('graph'), { nodes: graphNodes, edges: graphEdges }, {
+    physics: calibrated ? false : FORCE_PHYSICS,
+    interaction: { hover: true, tooltipDelay: 150, zoomView: true, navigationButtons: false },
+    layout: { improvedLayout: !calibrated },
+  });
+  if (calibrated) network.fit();
+
+  if (PE) {
+    const layoutBtn = document.createElement('button');
+    layoutBtn.textContent = '布局: 校准';
+    layoutBtn.style.cssText = 'position:absolute;top:8px;right:8px;z-index:5;padding:4px 10px;font-size:11px;color:#555;background:#fff;border:1px solid #d0d0d0;border-radius:4px;cursor:pointer;';
+    document.getElementById('graph').appendChild(layoutBtn);
+    layoutBtn.onclick = () => {
+      calibrated = !calibrated;
+      layoutBtn.textContent = calibrated ? '布局: 校准' : '布局: 力导向';
+      if (calibrated) {
+        network.setOptions({ physics: false });
+        Object.entries(PE).forEach(([id, p]) => { if (nodeIds.has(id)) network.moveNode(id, p.x, p.y); });
+        network.fit({ animation: { duration: 300 } });
+      } else {
+        network.setOptions({ physics: FORCE_PHYSICS });
+      }
+    };
+  }
+
+  // fit after stabilize
+  network.on('stabilized', () => { network.fit({ animation: { duration: 300 } }); });
+
+  // ── Click node → right panel detail ──
+  const ndEl = document.getElementById('node-detail');
+  const ndTitle = document.getElementById('nd-title');
+  const ndBody = document.getElementById('nd-body');
+  document.getElementById('nd-close').onclick = () => { ndEl.classList.remove('active'); network.unselectAll(); };
+
+  network.on('click', function(p) {
+    if (!p.nodes.length) { ndEl.classList.remove('active'); return; }
+    hint.style.opacity = '0';
+    const nid = p.nodes[0];
+    const node = DATA.nodes.find(n => n.id === nid);
+    if (!node) return;
+    ndTitle.textContent = node.label;
+
+    let html = `<div><span class="badge badge-${node.type}">${node.type}</span> <span class="badge badge-${node.confidence}">${node.confidence}</span> &nbsp;${node.updated}</div>`;
+
+    // data points
+    const dp = DATA.data_rows.filter(r => r.slug === nid);
+    if (dp.length) {
+      html += '<div class="nd-section"><b>Data</b></div>';
+      dp.forEach(d => {
+        html += `<div class="nd-row"><span class="nd-key">${d.field}</span><span class="nd-val">${d.value} ${d.unit} <span style="color:#aaa;font-weight:400">${d.period}</span></span></div>`;
+      });
+    }
+
+    // relations
+    const rels = DATA.edges.filter(e => e.from === nid || e.to === nid);
+    if (rels.length) {
+      html += '<div class="nd-section"><b>Relations</b></div>';
+      rels.forEach(r => {
+        if (r.from === nid)
+          html += `<div class="nd-rel">${node.label} <span class="nd-rel-arrow">→</span> <span style="color:#7c3aed">${r.label}</span> <span class="nd-rel-arrow">→</span> ${r.to}</div>`;
+        else
+          html += `<div class="nd-rel">${r.from} <span class="nd-rel-arrow">→</span> <span style="color:#7c3aed">${r.label}</span> <span class="nd-rel-arrow">→</span> ${node.label}</div>`;
+      });
+    }
+
+    ndBody.innerHTML = html;
+    ndEl.classList.add('active');
+    ndEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+} else {
+  document.getElementById('graph').innerHTML = '<div class="empty">No nodes</div>';
+}
+
+// ── Data Table ──
+document.getElementById('dp-count').textContent = DATA.data_rows.length;
+const dtEl = document.getElementById('data-table');
+if (DATA.data_rows.length) {
+  dtEl.innerHTML = `<table><thead><tr><th>Page</th><th>Field</th><th class="r">Value</th><th>Unit</th><th>Period</th><th>Conf.</th></tr></thead><tbody>`
+    + DATA.data_rows.map(r =>
+      `<tr><td>${r.page}</td><td>${r.field}</td><td class="r"><b>${r.value}</b></td><td>${r.unit}</td><td>${r.period}</td><td><span class="badge badge-${r.confidence}">${r.confidence}</span></td></tr>`
+    ).join('') + '</tbody></table>';
+} else { dtEl.innerHTML = '<div class="empty">No data points</div>'; }
+
+// ── Pages ──
+document.getElementById('pg-count').textContent = DATA.freshness.length;
+const ftEl = document.getElementById('freshness-table');
+if (DATA.freshness.length) {
+  const s = [...DATA.freshness].sort((a,b) => b.updated.localeCompare(a.updated));
+  ftEl.innerHTML = `<table><thead><tr><th>Page</th><th>Type</th><th class="r">Updated</th></tr></thead><tbody>`
+    + s.map(r => `<tr><td>${r.slug}</td><td><span class="badge badge-${r.type}">${r.type}</span></td><td class="r">${r.updated}</td></tr>`).join('')
+    + '</tbody></table>';
+} else { ftEl.innerHTML = '<div class="empty">No pages</div>'; }
+
+// ── Contested ──
+if (DATA.contested_pages.length) {
+  document.getElementById('contested-panel').style.display = '';
+  document.getElementById('ct-count').textContent = DATA.contested_pages.length;
+  document.getElementById('contested-list').innerHTML = `<table><tbody>`
+    + DATA.contested_pages.map(p => `<tr><td><span class="badge badge-contested">contested</span> &nbsp;${p}</td></tr>`).join('') + '</tbody></table>';
+}
+
+// ── Coverage ──
+if (DATA.coverage_gaps.length) {
+  document.getElementById('coverage-panel').style.display = '';
+  document.getElementById('cg-count').textContent = DATA.coverage_gaps.length;
+  document.getElementById('coverage-table').innerHTML = `<table><thead><tr><th>Page</th><th>Issue</th><th>Detail</th></tr></thead><tbody>`
+    + DATA.coverage_gaps.map(r => `<tr><td>${r.slug}</td><td><span class="badge badge-${r.issue}">${r.issue}</span></td><td>${r.detail}</td></tr>`).join('')
+    + '</tbody></table>';
+}
+</script>
+</body>
+</html>

@@ -40,3 +40,11 @@
 - Facts(T2): 救世主情结三部曲首现判定、弱势文化诗化前身判定、历史唯物主义天幕红尘姿态判定（3条）
 - Events(T4): 2013-天幕红尘出版
 - Conflicts: none
+
+## 2026-06-12 — deep-dive 第二轮（民主论节点 + 张力分析 + lint）
+- Source: 引用 来源/2026-06-12-天幕红尘（民主论引文 7 条全部 grep 核验+章节定位）
+- Created concept: 概念/民主的因果论（政治哲学首批）、概念/立场（豆子之喻/立场悖论）
+- Created analysis: 分析/豆豆体系的内在张力（六张力：is-ought三级跳/决定论vs方法论/坦然vs无住/住因果相/外天道vs内自性/知场不免于场；steelman+反驳+裁决）
+- Lint 修复: 清除首轮 28 条方向颠倒/互为重复的 frontmatter 边（著作→appears_in→概念、人物→authored_by→著作、互相 develops 等）；补写 26 条缺失正向边入 db；frontmatter↔db diff 清零
+- Relations: +14 · Facts(T2): 六张力裁决（1条）
+- Conflicts: none

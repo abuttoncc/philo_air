@@ -1,0 +1,13 @@
+name: capital-allocation
+domain: capital-allocation
+direction: 实践哲学          # 大方向（科技 / 金融），_index.md 据此分组
+ontology_type: domain
+description: 资本配置与商业判断：CEO 资本配置五选项、高质量企业要素、竞争优势模式、投资决策框架
+central_entity: 资本配置
+hub: 资本配置                       # Obsidian Hub 页文件名（不含 .md）
+keywords: [资本配置, 回购, 并购, 分红, 资本回报, ROIC, 护城河, 竞争优势, 高质量投资, CEO, 股东价值, 复利, 商业模式, 投资框架, 局外人]                 # 路由关键词：ingest/recall 据此判断材料属哪个域
+validator: none
+validator_coverage: none
+schema_version: '2.0'
+created: '2026-06-13'
+updated: '2026-06-13'

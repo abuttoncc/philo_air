@@ -1,0 +1,13 @@
+name: product-philosophy
+domain: product-philosophy
+direction: 实践哲学          # 大方向（科技 / 金融），_index.md 据此分组
+ontology_type: domain
+description: 产品哲学与创新判断：乔布斯式心智模型、决策启发式、设计六支柱（工艺/极简/聚焦/UX/细节/端到端）
+central_entity: 产品哲学
+hub: 产品哲学                       # Obsidian Hub 页文件名（不含 .md）
+keywords: [产品哲学, 乔布斯, 产品设计, 极简, 聚焦, 说不, 工艺, 端到端, 用户体验, 创新, 现实扭曲力场, 科技与人文, 品味, A级人才, 心智模型]                 # 路由关键词：ingest/recall 据此判断材料属哪个域
+validator: none
+validator_coverage: none
+schema_version: '2.0'
+created: '2026-06-13'
+updated: '2026-06-13'

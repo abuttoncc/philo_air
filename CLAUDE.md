@@ -163,6 +163,7 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 | 通道 | 用途 |
 |------|------|
 | `web`（WebSearch / 网页阅读） | SEP（Stanford Encyclopedia of Philosophy，首选权威源）、IEP、PhilPapers |
+| **原典源仓**（`ref/text-sources.md`） | 已验证的 GitHub 原典全文仓清单（毛选/金刚经等），含 curl 拉取模式与核验锚——需要原典全文时**先查此清单**再自行探索 |
 | 用户提供 | 原典片段、读书摘记、课程讲义、播客文字稿 |
 | 与 Agent 对谈 | 苏格拉底式讨论本身就是源材料：讨论记录落 `Inbox/`，结晶后 ingest |
 
