@@ -261,6 +261,26 @@ python references/schema.py --report wiki/{domain}     # _report.html 自动启�
 
 `_positions.json` 是派生产物（如 `_report.html`），可随时重算，删了不影响本体；勿手改。
 
+### Step 8 — 留 run 档（活动留痕，交互/无人值守皆建）
+
+ingest 收尾后，在 `08-Ops/runs/` 建一份 run 档（`type: run`），让 Dashboard「运行轨迹」与北极星条认得这次编译——**交互会话同样要建，不是无人值守专属**（这是运行轨迹的唯一数据源；漏建 = 这次编译在主页不可见）。最小 frontmatter：
+
+```yaml
+---
+type: run
+routine: compile          # 描述性名：compile / compile-newdomain / compile-canon / deep-dive …
+run-id: {YYYY-MM-DD-HHMM}
+started: {ISO}
+finished: {ISO}
+status: ok                # ok / running / fail
+outputs: "一句话产出：新增/更新节点数、域、schema 结果"
+budget-spent: —
+escalations: 0
+---
+```
+
+正文 `## 飞轮` 逐步记 `- HH:MM ✓ 步骤 · 细节 · 计数`（Dashboard 按此格式解析渲染）；高危写入裁决与审批账本 streak 变化一并记在对应步。无人值守：开跑先建 `status: running`、结束补全；交互：收尾一次性建 `status: ok` 即可。
+
 ---
 
 ## frontmatter 速查(写页时对照)

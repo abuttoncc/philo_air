@@ -76,5 +76,5 @@ description: |
 ## 陋居接线（08-Ops，2026-06-12 起）
 
 - **无人值守 run**（launchd，暂未接线；接线后生效）：开跑在 `08-Ops/runs/` 建 run 档（status: running），结束补全「## 飞轮」步进 / outputs / status；**产出收口**：高危写入（newnode / retire / disputed / xedge=grounds 族）先查 `08-Ops/审批账本.md`——gate `state: auto` 直写并在审计日志 append 记账，其余落 `08-Ops/review/` 候选卡。
-- **交互 run**（用户在终端）：高危写入当场问用户，裁决即记审批账（批准 streak+1 / 驳回清零 / contested 原地记）；跑完更新 `08-Ops/routines/答题员.md` 的 `last-run` / `last-result`。
+- **交互 run**（用户在终端）：高危写入当场问用户，裁决即记审批账（批准 streak+1 / 驳回清零 / contested 原地记）；**跑完在 `08-Ops/runs/` 建 run 档（飞轮 / outputs / status，与无人值守同格式）**，并更新 `08-Ops/routines/答题员.md` 的 `last-run` / `last-result`。否则交互式工作在 Dashboard 运行轨迹上不可见。
 - **「处理审核队列」**：读 `08-Ops/review/` 全部 pending 候选 → 逐张报卡（gate + diff + 来源 + 审批账本上下文）→ 按裁决执行写入 / 翻卡 / 记账。

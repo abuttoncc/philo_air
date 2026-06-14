@@ -141,7 +141,7 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 
 ① **发散提问**：在 Inbox 用研究笔记模板写「困惑/目标/思路/线索」。
 ② **研究发散**：读原典/SEP/讲义/播客，或直接与 Agent 对谈，边讨论边记。
-③ **编译（ingest）**：读源材料 → 先查 canonical（含 aliases）合并 or 按决策树建节点 → 给每条知识定 6 档时间档写对应表 → 补受控关系边 → 走退役协议 → 研究综述落 `分析/` → 更新 Hub（`{hub}.md`）+ `log.md` → 跑 `schema.py` 校验 → 刷新位置编码（`position_encoding.py` + `--report`）。
+③ **编译（ingest）**：读源材料 → 先查 canonical（含 aliases）合并 or 按决策树建节点 → 给每条知识定 6 档时间档写对应表 → 补受控关系边 → 走退役协议 → 研究综述落 `分析/` → 更新 Hub（`{hub}.md`）+ `log.md` → 跑 `schema.py` 校验 → 刷新位置编码（`position_encoding.py` + `--report`）→ **在 `08-Ops/runs/` 留 run 档（活动留痕，交互/无人值守皆建）**。
 ④ **新知识看板**：编译产物 = `wiki/{domain}/` 本体（节点 + data.db + 关系），在 Obsidian Graph / `_report.html` 呈现为「中心实体辐射的知识网」；后续 `recall` 站在它上面继续讨论。
 
 ### Agent ingest 操作清单
@@ -153,6 +153,7 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 4. 按 6 档时间档写对应表；补/退役受控关系边。
 5. 综述落 `分析/` + 更新 Hub + 追加 `log.md` + 跑 `schema.py` 校验。
 6. 刷新位置编码：`python references/position_encoding.py wiki/{domain}` + `schema.py --report`。
+7. **留 run 档**：在 `08-Ops/runs/` 建 `type: run` 档（飞轮 / outputs / status），交互会话同样要建——否则这次编译在 Dashboard 运行轨迹与北极星条上不可见。格式见 `ingest-protocol.md` Step 8。
 
 ---
 
@@ -201,13 +202,13 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 | 落点 | 内容 |
 |---|---|
 | `08-Ops/routines/` | agent 契约注册表（分诊员/答题员/研究员/结构巡检员/编译裁决员），契约 = trigger/scope/budget/escalation，**改契约 = 改权限** |
-| `08-Ops/runs/` | 无人值守 run 记录：开跑建档（status: running）、结束补全飞轮步进/产出/预算 |
+| `08-Ops/runs/` | run 记录（**交互与无人值守皆建**，Dashboard「运行轨迹」唯一数据源）：无人值守开跑建档（status: running）、结束补全；交互收尾一次性建（status: ok）。皆含飞轮步进/产出/预算 |
 | `08-Ops/review/` | 审核队列：高危写入候选卡（pending → approved/rejected/contested） |
 | `08-Ops/审批账本.md` | 信任账本：每类写入 streak/threshold/state + append-only 审计日志 |
 
 **高危写入 gate**：`newnode`(新建节点) / `xedge`(跨域 grounds 边) / `t0-merge`(verified 数值合并) 可通过连续批准升为自动批准；`retire`(退役触发) 与 `disputed`(数值分歧) **永久人工**。规则：连续 threshold 次批准零驳回 → `state: auto`（无人值守可直写但仍记账）；**一次驳回 streak 清零**、已 auto 降级。
 
-**模式区分**：交互会话 = 高危写入当场问用户，**裁决即记账**；无人值守（launchd，本库暂未接定时器；接线后同规则生效）= 非 auto gate 一律落 `review/` 候选。
+**模式区分**：交互会话 = 高危写入当场问用户，**裁决即记账**、**收尾建 run 档**；无人值守（launchd，本库暂未接定时器；接线后同规则生效）= 非 auto gate 一律落 `review/` 候选。**两模式都必须在 `08-Ops/runs/` 留 run 档**——否则交互式编译在 Dashboard 运行轨迹上不可见（留痕是契约固定收尾步，不是自愿）。
 
 **触发语**：「**处理审核队列**」→ 读全部 pending 候选 → 逐张报卡（gate + diff + 来源 + 审批账本上下文）→ 按用户裁决三步走：执行写入（退役走六步）/ 翻转卡片 status / 审批记账。
 
