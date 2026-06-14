@@ -168,46 +168,56 @@ def render_text(seed, depth, rings, subedges, nodes):
 
 
 # ── 结构空洞扫描（全库巡检：找该织入却没织入的节点）──────────────────
-# 只连这些类型 = 连到了 hub/作者/taxonomy，但没连到任何"思想"
-STRUCTURAL_TYPES = {"part_of", "proposed_by", "authored_by", "classified_as",
-                    "belongs_to", "instance_of"}
-# 这些类型天然边缘，不算空洞：来源是叶子、分析是引用枢纽、本体是 hub
-SKIP_TYPES_SCAN = {"source", "analysis", "ontology"}
+SKIP_TYPES_SCAN = {"source", "analysis", "ontology"}   # 天然边缘，不算洞
+ANCHOR_TYPES = {"part_of", "instance_of"}              # 把节点归入概念树的边
+# 真·概念间思想边（有其一即"已横向织入"，不进富化池）
+IDEA_TYPES = {"enables", "develops", "supports", "critiques", "grounds", "responds_to"}
+# 纯归属/标签边：只有这些 = 没真正连进结构（"谁提的"不算织入）
+ATTRIB_ONLY = {"proposed_by", "authored_by", "classified_as"}
 
 
 def scan_holes(nodes, out_adj, in_adj):
-    rows = []
+    """返回 (hard, soft)。
+    hard = 真洞：孤儿（0 边）/ 未归位概念（无 part_of 锚，既非子也非父）/ 弱连接实体（单线 attribution）。
+    soft = 可横向富化：已 part_of 归位、但无思想边的概念（enables/develops… 候选，非洞）。
+    关键修正：已 part_of 归位的干净树叶（deg=1）不再误报为洞——一个干净分类树的叶子必然 deg=1。
+    """
+    hard, soft = [], []
     for slug, n in nodes.items():
         if n["type"] in SKIP_TYPES_SCAN:
             continue
         outs, ins = out_adj.get(slug, []), in_adj.get(slug, [])
         deg = len(outs) + len(ins)
-        types = {t for _, t, _ in outs} | {t for _, t, _ in ins}
+        all_t = {t for _, t, _ in outs} | {t for _, t, _ in ins}
+        woven = bool(all_t - ATTRIB_ONLY)          # 有任何非纯归属边 = 已连进结构（不止"谁提的"）
+        placed = bool(all_t & ANCHOR_TYPES)        # 有 part_of/instance_of 分类锚
+        has_idea = bool(all_t & IDEA_TYPES)
+        rec = {"slug": slug, "type": n["type"], "domain": n["domain"],
+               "deg": deg, "types": sorted(all_t)}
         if deg == 0:
-            tier = "孤儿"
-        elif deg == 1:
-            tier = "挂件"
-        elif types <= STRUCTURAL_TYPES:
-            tier = "仅taxonomy"
-        else:
-            continue
-        rows.append({"slug": slug, "type": n["type"], "domain": n["domain"],
-                     "deg": deg, "types": sorted(types), "tier": tier})
-    return rows
+            rec["tier"] = "孤儿"; hard.append(rec)
+        elif n["type"] == "concept" and not woven:
+            rec["tier"] = "未织入"; hard.append(rec)
+        elif n["type"] == "entity" and deg == 1:
+            rec["tier"] = "弱连接"; hard.append(rec)
+        elif n["type"] == "concept" and placed and not has_idea:
+            rec["tier"] = "可富化"; soft.append(rec)
+        # else: 有思想边 / 实体多连 / 已健康 → 跳过
+    return hard, soft
 
 
-def render_scan(rows, nodes):
-    order = {"孤儿": 0, "挂件": 1, "仅taxonomy": 2}
-    rows.sort(key=lambda r: (order[r["tier"]], r["domain"], r["slug"]))
+def render_scan(hard, soft, nodes):
     total = sum(1 for v in nodes.values() if v["type"] not in SKIP_TYPES_SCAN)
-    L = [f"⊙ 结构空洞扫描 · 实质节点 {total} 个 · {len(rows)} 个待织入"]
+    L = [f"⊙ 结构空洞扫描 · 实质节点 {total} · 真洞 {len(hard)} · 可富化 {len(soft)}"]
     desc = {"孤儿": "0 边 · 完全断开 · P0",
-            "挂件": "1 边 · 单线 · P1",
-            "仅taxonomy": "只连 hub/作者、无思想边 · P2"}
+            "未织入": "概念只有纯归属边（proposed/authored）· 没连进结构 · P1",
+            "弱连接": "实体单线（attribution）· 实体常态 · P2"}
+    order = {"孤儿": 0, "未织入": 1, "弱连接": 2}
+    hard.sort(key=lambda r: (order[r["tier"]], r["domain"], r["slug"]))
     by = {}
-    for r in rows:
+    for r in hard:
         by.setdefault(r["tier"], []).append(r)
-    for tier in ["孤儿", "挂件", "仅taxonomy"]:
+    for tier in ["孤儿", "未织入", "弱连接"]:
         grp = by.get(tier, [])
         if not grp:
             continue
@@ -215,7 +225,12 @@ def render_scan(rows, nodes):
         for r in grp:
             et = (" · 现有: " + "/".join(r["types"])) if r["types"] else ""
             L.append(f"  {r['slug']}  ({r['type']}/{r['domain']} · deg={r['deg']}{et})")
-    L.append("\n→ 孤儿/挂件 派研究员补织入边；仅taxonomy 补思想边（grounds/references/supports/develops…）")
+    if soft:
+        soft.sort(key=lambda r: (r["domain"], r["slug"]))
+        L.append(f"\n── 可横向富化（{len(soft)}）· 已 part_of 归位、缺思想边（enables/develops 候选，非洞）──")
+        for r in soft:
+            L.append(f"  {r['slug']}  ({r['type']}/{r['domain']} · deg={r['deg']} · 现有: {'/'.join(r['types'])})")
+    L.append("\n→ 真洞派研究员织入边；可富化用 enables/develops 补横向思想边（富化非必须）")
     return "\n".join(L)
 
 
@@ -241,9 +256,9 @@ def main():
     nodes, out_adj, in_adj = load_graph(a.vault, a.include_retired)
 
     if a.scan:
-        rows = scan_holes(nodes, out_adj, in_adj)
-        print(json.dumps({"scan": rows}, ensure_ascii=False, indent=2) if a.json
-              else render_scan(rows, nodes))
+        hard, soft = scan_holes(nodes, out_adj, in_adj)
+        print(json.dumps({"hard": hard, "soft": soft}, ensure_ascii=False, indent=2) if a.json
+              else render_scan(hard, soft, nodes))
         return
     if not a.seed:
         ap.error("需要种子 slug，或用 --scan 扫全库")

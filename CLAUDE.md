@@ -104,7 +104,7 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 
 `type` 不许自由文本，从下表选，越界边被 `lint` 拒绝。双写：页面 `frontmatter.relations[]`（给 Obsidian 连边）+ `data.db relations 表`，两者一致。
 
-`proposed_by`(概念/论证→人物) · `authored_by`(著作→人物) · `belongs_to`(人物→学派) · `appears_in`(概念/论证→著作) · `responds_to`(论证→概念[问题]) · `supports`/`critiques`(论证/人物→概念/论证) · `develops`(后继概念/人物→前驱概念) · `instance_of`(论证→概念) · `part_of`(概念→概念) · `classified_as`(→分类标签) · `created_by`/`changed_by`(→事件) · `grounds`(理论哲学节点→任意域节点，跨域签名边) · `references`(分析/来源→任意，只溯源)。
+`proposed_by`(概念/论证→人物) · `authored_by`(著作→人物) · `belongs_to`(人物→学派) · `appears_in`(概念/论证→著作) · `responds_to`(论证→概念[问题]) · `supports`/`critiques`(论证/人物→概念/论证) · `develops`(后继概念/人物→前驱概念) · `instance_of`(论证→概念) · `part_of`(概念→概念) · `enables`(概念→概念，因果/增强：X 使能/增强 Y，非组成非师承) · `classified_as`(→分类标签) · `created_by`/`changed_by`(→事件) · `grounds`(理论哲学节点→任意域节点，跨域签名边) · `references`(分析/来源→任意，只溯源)。
 
 ### 6 档时间模型 + 退役不删除
 
