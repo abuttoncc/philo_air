@@ -167,9 +167,63 @@ def render_text(seed, depth, rings, subedges, nodes):
     return "\n".join(L)
 
 
+# ── 结构空洞扫描（全库巡检：找该织入却没织入的节点）──────────────────
+# 只连这些类型 = 连到了 hub/作者/taxonomy，但没连到任何"思想"
+STRUCTURAL_TYPES = {"part_of", "proposed_by", "authored_by", "classified_as",
+                    "belongs_to", "instance_of"}
+# 这些类型天然边缘，不算空洞：来源是叶子、分析是引用枢纽、本体是 hub
+SKIP_TYPES_SCAN = {"source", "analysis", "ontology"}
+
+
+def scan_holes(nodes, out_adj, in_adj):
+    rows = []
+    for slug, n in nodes.items():
+        if n["type"] in SKIP_TYPES_SCAN:
+            continue
+        outs, ins = out_adj.get(slug, []), in_adj.get(slug, [])
+        deg = len(outs) + len(ins)
+        types = {t for _, t, _ in outs} | {t for _, t, _ in ins}
+        if deg == 0:
+            tier = "孤儿"
+        elif deg == 1:
+            tier = "挂件"
+        elif types <= STRUCTURAL_TYPES:
+            tier = "仅taxonomy"
+        else:
+            continue
+        rows.append({"slug": slug, "type": n["type"], "domain": n["domain"],
+                     "deg": deg, "types": sorted(types), "tier": tier})
+    return rows
+
+
+def render_scan(rows, nodes):
+    order = {"孤儿": 0, "挂件": 1, "仅taxonomy": 2}
+    rows.sort(key=lambda r: (order[r["tier"]], r["domain"], r["slug"]))
+    total = sum(1 for v in nodes.values() if v["type"] not in SKIP_TYPES_SCAN)
+    L = [f"⊙ 结构空洞扫描 · 实质节点 {total} 个 · {len(rows)} 个待织入"]
+    desc = {"孤儿": "0 边 · 完全断开 · P0",
+            "挂件": "1 边 · 单线 · P1",
+            "仅taxonomy": "只连 hub/作者、无思想边 · P2"}
+    by = {}
+    for r in rows:
+        by.setdefault(r["tier"], []).append(r)
+    for tier in ["孤儿", "挂件", "仅taxonomy"]:
+        grp = by.get(tier, [])
+        if not grp:
+            continue
+        L.append(f"\n── {tier}（{len(grp)}）· {desc[tier]} ──")
+        for r in grp:
+            et = (" · 现有: " + "/".join(r["types"])) if r["types"] else ""
+            L.append(f"  {r['slug']}  ({r['type']}/{r['domain']} · deg={r['deg']}{et})")
+    L.append("\n→ 孤儿/挂件 派研究员补织入边；仅taxonomy 补思想边（grounds/references/supports/develops…）")
+    return "\n".join(L)
+
+
 def main():
     ap = argparse.ArgumentParser(description="图谱遍历：从种子节点沿边辐射 N 跳")
-    ap.add_argument("seed", help="种子节点 slug")
+    ap.add_argument("seed", nargs="?", help="种子节点 slug（--scan 模式可省）")
+    ap.add_argument("--scan", action="store_true",
+                    help="扫全库结构空洞（孤儿/挂件/仅taxonomy），不需种子")
     ap.add_argument("--depth", type=int, default=1, help="辐射跳数（默认 1）")
     ap.add_argument("--dir", choices=["out", "in", "both"], default="both",
                     help="边方向：out=它指向的 / in=指向它的 / both（默认）")
@@ -185,6 +239,15 @@ def main():
     skip = set(t.strip() for t in a.skip_types.split(",") if t.strip()) or None
 
     nodes, out_adj, in_adj = load_graph(a.vault, a.include_retired)
+
+    if a.scan:
+        rows = scan_holes(nodes, out_adj, in_adj)
+        print(json.dumps({"scan": rows}, ensure_ascii=False, indent=2) if a.json
+              else render_scan(rows, nodes))
+        return
+    if not a.seed:
+        ap.error("需要种子 slug，或用 --scan 扫全库")
+
     rings, subedges = expand(a.seed, a.depth, a.dir, nodes, out_adj, in_adj,
                              types=types, skip_types=skip, cross_only=a.cross_only)
 
