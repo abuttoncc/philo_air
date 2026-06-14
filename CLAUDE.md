@@ -32,7 +32,9 @@ Obsidian 个人哲学知识库，覆盖**理论哲学 + 实践哲学两大方向
 
 ## 二、知识本体层 `wiki/` — auto-wiki v2 本体化系统
 
-本仓库已安装 **auto-wiki** skill（知识编译器），引擎在 `.claude/skills/auto-wiki/`，脚本在其 `references/`（`schema.py` 校验 frontmatter、`store.py` 操作 `data.db`）。
+本仓库已安装 **auto-wiki** skill（知识编译器），引擎在 `.claude/skills/auto-wiki/`，脚本在其 `references/`（`schema.py` 校验 frontmatter、`store.py` 操作 `data.db`、`position_encoding.py` 算谱布局、`expand.py` **图谱遍历**）。
+
+> **`expand.py` — 图谱遍历动作**：`recall`/`deep-dive` 想找"语义盲区里的结构邻居"（名字看不出相关、但结构上一跳即达的节点，典型=跨域 grounds 边）时用它，别只靠语义聚光。`python .claude/skills/auto-wiki/references/expand.py <种子slug> --depth N [--dir out|in|both] [--cross-only]`：合并全库 `wiki/*/data.db` 成一张图，从种子沿 current 边辐射 N 跳，`★` 标跨域邻居（最值钱）。这是 LLM 默认不会做的"沿边走"——把它当显式动作调。
 
 ### 按领域组织，不按课题
 

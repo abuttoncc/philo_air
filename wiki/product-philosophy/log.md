@@ -27,3 +27,13 @@
 - 防扩散: 「智能体工作区 3.0」**不本体化**（用户工具/项目，非哲学知识）——留项目记忆 + 分析页派生视图；「极简/It just works」归入既有 [[聚焦即说不]]/[[隐形工艺]]，不另建概念；无跨域 grounds 边（3.0 非他域节点）
 - 审批: newnode 7→8（交互会话，用户指令「b」即裁决）
 - Conflicts: none
+
+## 2026-06-14 — ingest：App Store 发布史补厚 + 去孤儿（expand 驱动）
+- 触发: expand.py 查出 [[2008-App-Store开放]] 为孤儿节点（0 邻居）；用户问"哪款机器/何时开发者涌入"
+- Source: 来源/2026-06-14-AppStore发布史-anysearch调研（二手·权威，命中 Apple Newsroom 一手新闻稿）
+- Revised: 事件/2008-App-Store开放（机器=iPhone 3G 2008-07-11；SDK 2008-03-06；设计理念=受控的开放）
+- Created: 来源 1
+- data.db: data_points +4（SDK 10万/首发 500/首周 1000万/累计 10亿，verified）；relations +2（聚焦即说不、端到端控制 →changed_by→ 事件，**去孤儿**）
+- 防扩散: iPhone 3G 不建节点（设备，留事件正文）；不另建 SDK 事件（并入本事件 + T0）
+- 审批: newnode 8→9（来源 1；交互会话，用户指令「a」+ 提问即裁决）；T0 为新增 verified 非合并、edges 为域内非 xedge
+- Conflicts: none
