@@ -45,3 +45,9 @@
 - 纪律: 6 边皆有概念页内容依据（Rock Tumbler/It just works/从理解出发设计…）；现实扭曲力场/直觉优于智识（依据偏薄）、销售驱动腐化（反模式）**留可富化池不硬织**
 - 复验: scan 可富化 15→6，掉出的 9 个正是所织概念 → 闭环自洽
 - Conflicts: none
+
+## 2026-06-15 — 事件去孤儿（exemplifies 放宽，evidences 决策落地为"复用"）
+- 决策: evidences 缺口选项 A —— 放宽 `exemplifies` 从「案例→概念」到「**案例/事件**→概念」，不新增词类（母本…本域 _ontology 同步）
+- data.db: relations +4（1997-回归→聚焦即说不、2007-iPhone→一句话定义、2005-演讲→连点成线/死亡过滤器，皆 exemplifies）
+- 复验: scan 孤儿 4→0（product-philosophy 3 事件去孤儿）；皆有事件页内容依据（"奠基性实证"/"教科书演示"/三个故事）
+- Conflicts: none

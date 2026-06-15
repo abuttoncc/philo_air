@@ -19,3 +19,9 @@
 - data.db: relations +4（品牌力→定价权、定价权→增长来源、经常性收入→资本回报、竞争优势模式→资本回报，皆 enables）
 - 复盘: scan 在此为假阳性（干净分类树叶 deg=1 必然），已记入待优化（scan 应区分"已 part_of 归位"与"真未织入"）
 - Conflicts: none
+
+## 2026-06-15 — 事件去孤儿（exemplifies 放宽）
+- 决策 A 落地: 放宽 `exemplifies` 允许 事件→概念（本域 _ontology 同步）
+- data.db: relations +1（《局外人》→changed_by→2012-巴菲特推荐《局外人》——2012 背书事件特例，连书不连概念）
+- 复验: scan 孤儿（capital-allocation 侧 2012 事件）去孤儿
+- Conflicts: none

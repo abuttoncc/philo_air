@@ -44,7 +44,7 @@ tags: [ontology, contract]
 
 本域特有增量（与 capital-allocation 共用同三词）：
 - `led_by`（公司 → 人物）：经营/掌舵，T3 关系带时态。例：苹果 →led_by→ 史蒂夫·乔布斯。
-- `exemplifies`（案例 → 概念）：案例例证某心智模型。例：iPhone砍实体键盘案例 →exemplifies→ 聚焦即说不。
+- `exemplifies`（**案例 / 事件** → 概念）：案例或有日期的事件例证/实证某心智模型。例：iPhone砍实体键盘案例 →exemplifies→ 聚焦即说不；1997-乔布斯回归苹果 →exemplifies→ 聚焦即说不（2026-06-15 放宽：事件可作实证，免去把每个实证都升格为案例）。
 - `involves`（案例 → 人物/公司）：案例涉及的主体。
 
 沿用母本：`proposed_by`(概念→人物) · `authored_by`(著作→人物) · `appears_in` · `supports`/`critiques` ·

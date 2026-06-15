@@ -7,7 +7,8 @@ created: '2026-06-13'
 updated: '2026-06-13'
 sources: [2026-06-13-乔布斯-GitHub技能笔记]
 confidence: medium
-relations: []
+relations:
+  - {target: 一句话定义, type: exemplifies}
 tags: [事件, 产品哲学]
 ---
 

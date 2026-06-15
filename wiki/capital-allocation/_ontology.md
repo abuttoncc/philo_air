@@ -44,7 +44,7 @@ tags: [ontology, contract]
 
 本域特有增量：
 - `led_by`（公司 → 人物）：经营/掌舵，T3 关系带时态。例：特利丹 →led_by→ 亨利·辛格尔顿（1960–1990）。
-- `exemplifies`（案例 → 概念）：案例例证某概念/框架。例：特利丹回购案例 →exemplifies→ 股票回购。
+- `exemplifies`（**案例 / 事件** → 概念）：案例或有日期的事件例证/实证某概念/框架。例：特利丹回购案例 →exemplifies→ 股票回购（2026-06-15 放宽：事件亦可作实证）。
 - `involves`（案例 → 人物/公司）：案例涉及的主体。例：首府广播并购ABC案例 →involves→ 汤姆·墨菲。
 
 沿用母本（语义不变）：`proposed_by`(概念→人物) · `authored_by`(著作→人物) · `appears_in`(概念/案例→著作) ·
