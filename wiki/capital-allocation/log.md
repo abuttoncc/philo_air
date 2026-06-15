@@ -25,3 +25,13 @@
 - data.db: relations +1（《局外人》→changed_by→2012-巴菲特推荐《局外人》——2012 背书事件特例，连书不连概念）
 - 复验: scan 孤儿（capital-allocation 侧 2012 事件）去孤儿
 - Conflicts: none
+
+## 2026-06-15 — 补全局外人 8 CEO 案例集（anysearch 驱动，补弱连接公司）
+- 触发: scan 报 5 家公司弱连接（TCI/伯克希尔/华盛顿邮报/罗尔斯顿/通用影院，仅 led_by）；用户「用 anysearch 补案例」
+- Source: 来源/2026-06-15-局外人五案例-anysearch调研（二手·多源：Thorndike 解读/HBS/Commoncog/Quartr）
+- Created: 6 页 — 案例 5（TCI杠杆税盾/华盛顿邮报回购/罗尔斯顿回购/通用影院多元化/伯克希尔浮存金）+ 来源 1；案例集补全为 8/8
+- data.db: relations +21（每案例 exemplifies→概念 + involves→公司/CEO + appears_in→《局外人》）；data_points +3（回购比例 40%/60%、跑赢标普 11x，verified）
+- 复验: scan 弱连接 14→9（5 公司脱离）；schema 45/45 PASSED
+- 防扩散: 案例集封顶 8（=书中 8 CEO），不再扩；CEO/公司复用既有节点
+- 审批: newnode 9→10（交互会话，用户指令即裁决）
+- Conflicts: none
