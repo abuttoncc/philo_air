@@ -386,3 +386,53 @@ html body.obsidian-app .markdown-preview-view.dashboard {
   text-decoration: underline; text-decoration-color: var(--amber); text-underline-offset: 2px;
 }
 .dashboard .bw .wcrux { font-size: .72rem; color: var(--ink-3); }
+
+/* ============================================================
+   v6.4 · 今日 Pulse（启发束）—— 仿 ChatGPT Pulse 晨间卡
+   心跳员每日一束，满宽横置于网格之上；卡片只指路不写正典。
+   命名空间 .pl*（避开北极星条已用的 .pulse 动画类）。
+   ============================================================ */
+.dashboard .bw .plsec { margin-bottom: 26px; }
+.dashboard .bw .plz {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
+  gap: 12px;
+  padding: 14px;
+}
+.dashboard .bw .plcard {
+  border: 1px solid var(--hair-2);
+  border-left: 3px solid var(--amber);
+  background: #FDFCF8;
+  border-radius: 3px;
+  padding: 11px 13px 12px;
+  display: flex; flex-direction: column; gap: 7px;
+  cursor: pointer;
+  transition: background .2s, transform .2s, box-shadow .2s;
+}
+.dashboard .bw .plcard:hover {
+  background: rgba(255,255,255,.92);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(27,24,18,.07);
+}
+.dashboard .bw .plcard .pltag {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: .6rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.dashboard .bw .plcard .pltag .pln { font-weight: 700; font-variant-numeric: tabular-nums; }
+.dashboard .bw .plcard .pltitle {
+  font-family: var(--disp); font-size: 1.04rem; font-weight: 600; line-height: 1.32; color: var(--ink);
+}
+.dashboard .bw .plcard .plbody { font-size: .77rem; line-height: 1.55; color: var(--ink-2); }
+.dashboard .bw .plcard .plhook {
+  font-size: .73rem; line-height: 1.5; color: var(--ink-2);
+  border-top: 1px dashed var(--hair); padding-top: 7px;
+}
+.dashboard .bw .plcard .plhook b { color: var(--ink); font-weight: 700; }
+.dashboard .bw .plcard .plrefs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 1px; }
+.dashboard .bw .plcard .plref {
+  font-family: var(--mono); font-size: .63rem; padding: 1px 8px;
+  border: 1px solid var(--hair-2); border-radius: 99px;
+  color: var(--ink-2); background: rgba(255,255,255,.55);
+}
+.dashboard .bw .plcard .plref:hover { border-color: var(--orange); color: var(--orange); }

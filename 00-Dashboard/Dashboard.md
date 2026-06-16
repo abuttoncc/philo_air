@@ -76,6 +76,11 @@ try { const cutoff = dv.date("today").minus(dv.duration("1d")); nRecent = runs.f
 // QA
 const qas = dv.pages('"07-QA"').where(p => p.type == "qa").sort(p => p["last-run"], "desc").array().slice(0, 5);
 
+// Pulse（今日启发束）—— 心跳员产出，读 08-Ops/pulse 最新一期
+const pulses = dv.pages('"08-Ops/pulse"').where(p => p.type == "pulse").sort(p => p.date, "desc").array();
+const pulseDoc = pulses.length ? pulses[0] : null;
+const pulseCards = (pulseDoc && Array.isArray(pulseDoc.cards)) ? pulseDoc.cards : [];
+
 // 最近 run 的飞轮步进
 let steps = [], runMeta = "";
 if (lastRun) {
@@ -209,6 +214,30 @@ const taskHtml = daily
 const secTodo = '<div class="sec rv rv5"><div class="sec-h" data-href="05-Daily/' + todayStr + '"><h2><span class="no">07</span>待办</h2><span class="meta">' + todayStr + ' · DAILY</span></div>'
   + '<div class="conbox"><div class="contasks" data-href="05-Daily/' + todayStr + '">' + taskHtml + '</div></div></div>';
 
+// ✦ 今日 Pulse（启发束·满宽，置于网格之上 —— 仿 ChatGPT Pulse 晨间卡）
+const ACC = { g: "var(--green)", r: "var(--red)", a: "var(--amber)", s: "var(--slate)" };
+const pulseFresh = pulseDoc && pulseDoc.date && pulseDoc.date.toFormat && pulseDoc.date.toFormat("yyyy-MM-dd") == todayStr;
+let pulseInner;
+if (!pulseDoc) {
+  pulseInner = '<div class="qempty"><div class="big">心跳未起。</div>还没有今日启发 —— 终端说「生成今日 pulse」</div>';
+} else {
+  pulseInner = '<div class="plz">' + pulseCards.map(c => {
+    const acc = ACC[c.accent] || ACC.a;
+    const refs = Array.isArray(c.refs) ? c.refs : (c.refs ? [c.refs] : []);
+    const refHtml = refs.map(r => '<span class="plref" data-href="' + esc(r) + '">' + esc(r) + '</span>').join("");
+    return '<div class="plcard" data-href="' + pulseDoc.file.path + '" style="border-left-color:' + acc + '">'
+      + '<div class="pltag"><span>' + esc(cut(c.tag || "", 30)) + '</span><span class="pln" style="color:' + acc + '">' + esc(c.n || "") + '</span></div>'
+      + '<div class="pltitle">' + esc(c.title || "") + '</div>'
+      + '<div class="plbody">' + esc(c.body || "") + '</div>'
+      + (c.hook ? '<div class="plhook"><b>对谈入口 ·</b> ' + esc(c.hook) + '</div>' : "")
+      + (refHtml ? '<div class="plrefs">' + refHtml + '</div>' : "")
+      + '</div>';
+  }).join("") + '</div>';
+}
+const pulseDateStr = pulseDoc && pulseDoc.date && pulseDoc.date.toFormat ? pulseDoc.date.toFormat("yyyy-MM-dd") : todayStr;
+const pulseMeta = pulseDoc ? (pulseCards.length + ' 张 · ' + (pulseFresh ? '今日 · fresh' : pulseDateStr) + ' · ' + esc(cut(pulseDoc.source || "", 32))) : 'NO PULSE';
+const secPulse = '<div class="sec plsec rv rv2"><div class="sec-h" data-href="' + (pulseDoc ? pulseDoc.file.path : "08-Ops/pulse") + '"><h2><span class="no">✦</span>今日 Pulse · 启发</h2><span class="meta">DAILY PULSE · ' + pulseMeta + '</span></div>' + pulseInner + '</div>';
+
 // 03 飞轮
 let flyHtml = "";
 if (!lastRun) flyHtml = '<div class="qempty">还没有 run 记录——首次无人值守任务后出现</div>';
@@ -283,7 +312,7 @@ const watchHtml = contestedNodes.length ? '<div class="watchbar rv rv2">'
 /* ───── 组装 ───── */
 const root = dv.el("div", "");
 root.className = "bw";
-root.innerHTML = mast + nstrip + watchHtml + navrow
+root.innerHTML = mast + nstrip + watchHtml + navrow + secPulse
   + '<div class="bw-grid">'
   + '<div class="col col1">' + secClock + secAppl + '</div>'
   + '<div class="col col2">' + secFly + secQa + '</div>'
