@@ -51,3 +51,25 @@
 - data.db: relations +4（1997-回归→聚焦即说不、2007-iPhone→一句话定义、2005-演讲→连点成线/死亡过滤器，皆 exemplifies）
 - 复验: scan 孤儿 4→0（product-philosophy 3 事件去孤儿）；皆有事件页内容依据（"奠基性实证"/"教科书演示"/三个故事）
 - Conflicts: none
+
+## 2026-06-17 — ingest：固收工具产品原型设计实践复盘（新话题）
+- Source: 来源/2026-06-17-固收工具产品设计对谈（讨论纪要；HTML 原型存库外 ~/Documents/fixed-income-cockpit）
+- 裁决: 注册表第 0 步命中既有 product-philosophy → **不建新域**（避免与"产品设计"重复）；话题落 分析/，概念落 概念/
+- Created: 9 页 — 概念 5（渐进式披露/图主导/磁力对齐/影响前后呈现/不可替代性拷问）· 案例 1（固收资产过程管理工具）· 分析 1（固收工具原型设计实践复盘）· 事件 1（2026-06-16-固收工具四方红队评审）· 来源 1
+- Revised: 分析/乔布斯产品哲学映射智能体工作区3.0（+「控制面投影范式」段：投影范式从图谱搬到债券组合）—— 控制面投影并入此页，不单独建概念
+- data.db: facts +4（案例决策序列 T1：MVP优先级/目标口径/主视觉/信息架构范式，1 条 caused_by 红队事件）· events +1 · relations +28（exemplifies 5 + changed_by 1 + develops 5 + part_of 5 + references 12）
+- 接入乔布斯网络: 渐进式披露→隐形工艺、图主导→设计即如何运作、影响前后呈现/磁力对齐→从用户体验倒推、不可替代性拷问→死亡过滤器（皆 develops）
+- 防扩散: 数据时效悖论/主动vs被动偏离/三套色分离/操作从左到右 留复盘正文，不单独建概念（用户选「精选核心6」→实建 5 + 控制面投影并页）
+- 审批: newnode（交互会话，用户 AskUserQuestion 裁决"精选核心6个"+"控制面投影并入3.0分析"即批准）
+- Conflicts: none
+
+## 2026-06-17 — lint（结构档）：固收复盘 ingest 后体检
+- 范围: product-philosophy 全域（43 页 < 50，全量）
+- Validation: schema 全过（来源页 source_type 讨论→一手 已修）
+- Broken Link: 0（新增/修改页 wikilink 全解析）
+- Orphan: 0 真洞；新概念/案例/分析 deg 4–8，已接入乔布斯网络
+- 治理: 红队事件原 deg=1 挂件 → 补 exemplifies→不可替代性拷问（事件实证该原则，沿 2026-06-15 放宽）→ relations 92→93
+- 越界关系边: 0（exemplifies/develops/references/changed_by/part_of 皆受控词）
+- 残留: 来源页 deg=1（source 天然叶子，正常，不强织）
+- 健康度: 良好
+- Conflicts: none
