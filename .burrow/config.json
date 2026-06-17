@@ -1,5 +1,5 @@
 {
-  "_note": "本库个性化配置；引擎来自 ../_burrow-core。改完跑 `python ../_burrow-core/burrow.py sync philo_air` 渲染回本库。",
+  "_note": "本库个性化配置；引擎来自 burrow-core 包（pip install）。改完在两库父目录下跑 `burrow sync philo_air` 渲染回本库。",
   "title_proper": "Philo Vault",
   "dashboard": {
     "title": "PHILO VAULT",
