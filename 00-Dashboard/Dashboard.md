@@ -4,10 +4,14 @@ cssclasses:
 ---
 
 ```dataviewjs
-/* ════ PHILO VAULT · 陋居 Dashboard v5 ════
-   单块渲染 demo 同构 DOM（masthead / 北极星条 / 三列 grid / footer），
-   样式在 .obsidian/snippets/dashboard.css（.bw 命名空间）。 */
+/* ════ 陋居 Dashboard v6 ════ 引擎来自 _burrow-core，勿手改本文件。
+   单块渲染同构 DOM（masthead / 北极星条 / pulse / 三列 grid / footer），
+   样式在 .obsidian/snippets/dashboard.css（.bw 命名空间）。
+   个性化全部来自下方 CFG（由 burrow.py 从各库 .burrow/config.json 注入）。 */
 try {
+
+/* ───── 配置（per-vault，burrow.py 注入；勿手改）───── */
+const CFG = {"title": "PHILO VAULT", "order": ["人物", "学派", "著作", "概念", "论证", "事件", "分析", "来源"], "labels": ["问题", "应用议题", "义务论", "后果主义", "美德伦理", "一元论", "二元论"], "navOntology": "wiki/_index", "features": {"pulse": true}};
 
 /* ───── 数据采集 ───── */
 const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -17,7 +21,7 @@ const fmtD = d => d && d.toFormat ? d.toFormat("MM-dd") : (d ? String(d) : "—"
 // 本体（全域）—— hub 页一律 type:ontology，已被 type 过滤排除，无需按域名写白名单
 const nodes = dv.pages('"wiki"').where(p => p.type && p.type != "ontology" && p.type != "registry" && !p.file.name.startsWith("_") && p.file.name != "log").array();
 const edges = nodes.reduce((s, p) => s + ((p.relations || []).length), 0);
-const LABELS = new Set(["问题", "应用议题", "义务论", "后果主义", "美德伦理", "一元论", "二元论"]);
+const LABELS = new Set(CFG.labels);
 const contestedNodes = nodes.filter(p => p.confidence == "contested" || p.confidence == "low");
 const contested = contestedNodes.length;
 const noSrc = nodes.filter(p => p.type != "source" && (!p.sources || p.sources.length == 0)).length;
@@ -30,7 +34,7 @@ for (const p of nodes) for (const l of (p.file.outlinks || [])) {
   if (!dv.page(l.path)) broken++;
 }
 const defects = contested + noSrc + orphan + broken;
-const ORDER = ["人物", "学派", "著作", "概念", "论证", "事件", "分析", "来源"];
+const ORDER = CFG.order;
 const cnt = {}; for (const p of nodes) { const s = p.file.folder.split("/").pop(); cnt[s] = (cnt[s] || 0) + 1; }
 // 域：从节点路径 wiki/{domain}/… 动态推断（不写死域数与域名）
 const domainSlugs = [...new Set(nodes.map(p => p.file.path.split("/")[1]).filter(Boolean))].sort();
@@ -76,8 +80,8 @@ try { const cutoff = dv.date("today").minus(dv.duration("1d")); nRecent = runs.f
 // QA
 const qas = dv.pages('"07-QA"').where(p => p.type == "qa").sort(p => p["last-run"], "desc").array().slice(0, 5);
 
-// Pulse（今日启发束）—— 心跳员产出，读 08-Ops/pulse 最新一期
-const pulses = dv.pages('"08-Ops/pulse"').where(p => p.type == "pulse").sort(p => p.date, "desc").array();
+// Pulse（今日启发束）—— 心跳员产出，读 08-Ops/pulse 最新一期（feature flag: CFG.features.pulse）
+const pulses = CFG.features && CFG.features.pulse ? dv.pages('"08-Ops/pulse"').where(p => p.type == "pulse").sort(p => p.date, "desc").array() : [];
 const pulseDoc = pulses.length ? pulses[0] : null;
 const pulseCards = (pulseDoc && Array.isArray(pulseDoc.cards)) ? pulseDoc.cards : [];
 
@@ -159,10 +163,12 @@ const WD = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "S
 const greet = period + " · " + now.getFullYear() + "." + pad(now.getMonth() + 1) + "." + pad(now.getDate()) + " " + WD[now.getDay()];
 const typesHtml = ORDER.filter(k => cnt[k]).map(k => '<span class="ht" data-search="path:' + k + '/" title="搜索 ' + k + '/ 下全部节点">' + k + ' <b>' + cnt[k] + '</b></span>').join("");
 const healthChip = defects > 0 ? '<span class="hchip warn">待治理 ' + defects + '</span>' : '<span class="hchip ok">健康 · 无断链 / 孤儿 / 争议</span>';
-const NAV = [["知识本体", "wiki/_index"], ["自动化", "08-Ops/README"], ["问答库", "07-QA/README"], ["收集箱", "Inbox/README"], ["日记", "05-Daily/" + todayStr], ["MOC", "00-Dashboard/MOC"]];
+const NAV = [["知识本体", CFG.navOntology], ["自动化", "08-Ops/README"], ["问答库", "07-QA/README"], ["收集箱", "Inbox/README"], ["日记", "05-Daily/" + todayStr], ["MOC", "00-Dashboard/MOC"]];
 const navHtml = '<div class="navlinks">' + NAV.map(([nm, h]) => '<a data-href="' + h + '">' + nm + '</a>').join('<span class="sep">·</span>') + '</div>';
+const _tw = (CFG.title || "VAULT").split(" ");
+const brandBig = esc(_tw[0]) + (_tw.length > 1 ? ' <em>' + esc(_tw.slice(1).join(" ")) + '</em>' : "");
 const mast = '<header class="mast rv rv1">'
-  + '<div class="brand"><div class="big">PHILO <em>VAULT</em></div>'
+  + '<div class="brand"><div class="big">' + brandBig + '</div>'
   + '<div class="subline"><span class="bbadge">THE BURROW</span><span class="greet">' + greet + '</span><span class="morning">近一日 <b data-href="' + (lastRun ? lastRun.file.path : "08-Ops/README") + '">' + nRecent + '</b> 个 agent 运行，<b data-href="08-Ops/review/README">' + cands.length + '</b> 项例外待裁决，<b data-href="08-Ops/README">' + nAnomaly + '</b> 个 agent 异常</span></div></div>'
   + '<div class="mast-mid"><div class="mlbl">本体 · 全域构成（' + domainsUpper + '）</div><div class="types">' + typesHtml + '</div></div>'
   + '<div class="head-right">' + navHtml + '<div class="hr-bot">' + healthChip + '<span class="date">' + dateLine + '</span></div></div></header>';
@@ -213,30 +219,6 @@ const taskHtml = daily
   : '<div class="tk">还没有今天的日记</div>';
 const secTodo = '<div class="sec rv rv5"><div class="sec-h" data-href="05-Daily/' + todayStr + '"><h2><span class="no">07</span>待办</h2><span class="meta">' + todayStr + ' · DAILY</span></div>'
   + '<div class="conbox"><div class="contasks" data-href="05-Daily/' + todayStr + '">' + taskHtml + '</div></div></div>';
-
-// ✦ 今日 Pulse（启发束·满宽，置于网格之上 —— 仿 ChatGPT Pulse 晨间卡）
-const ACC = { g: "var(--green)", r: "var(--red)", a: "var(--amber)", s: "var(--slate)" };
-const pulseFresh = pulseDoc && pulseDoc.date && pulseDoc.date.toFormat && pulseDoc.date.toFormat("yyyy-MM-dd") == todayStr;
-let pulseInner;
-if (!pulseDoc) {
-  pulseInner = '<div class="qempty"><div class="big">心跳未起。</div>还没有今日启发 —— 终端说「生成今日 pulse」</div>';
-} else {
-  pulseInner = '<div class="plz">' + pulseCards.map(c => {
-    const acc = ACC[c.accent] || ACC.a;
-    const refs = Array.isArray(c.refs) ? c.refs : (c.refs ? [c.refs] : []);
-    const refHtml = refs.map(r => '<span class="plref" data-href="' + esc(r) + '">' + esc(r) + '</span>').join("");
-    return '<div class="plcard" data-href="' + pulseDoc.file.path + '" style="border-left-color:' + acc + '">'
-      + '<div class="pltag"><span>' + esc(cut(c.tag || "", 30)) + '</span><span class="pln" style="color:' + acc + '">' + esc(c.n || "") + '</span></div>'
-      + '<div class="pltitle">' + esc(c.title || "") + '</div>'
-      + '<div class="plbody">' + esc(c.body || "") + '</div>'
-      + (c.hook ? '<div class="plhook"><b>对谈入口 ·</b> ' + esc(c.hook) + '</div>' : "")
-      + (refHtml ? '<div class="plrefs">' + refHtml + '</div>' : "")
-      + '</div>';
-  }).join("") + '</div>';
-}
-const pulseDateStr = pulseDoc && pulseDoc.date && pulseDoc.date.toFormat ? pulseDoc.date.toFormat("yyyy-MM-dd") : todayStr;
-const pulseMeta = pulseDoc ? (pulseCards.length + ' 张 · ' + (pulseFresh ? '今日 · fresh' : pulseDateStr) + ' · ' + esc(cut(pulseDoc.source || "", 32))) : 'NO PULSE';
-const secPulse = '<div class="sec plsec rv rv2"><div class="sec-h" data-href="' + (pulseDoc ? pulseDoc.file.path : "08-Ops/pulse") + '"><h2><span class="no">✦</span>今日 Pulse · 启发</h2><span class="meta">DAILY PULSE · ' + pulseMeta + '</span></div>' + pulseInner + '</div>';
 
 // 03 飞轮
 let flyHtml = "";
@@ -298,7 +280,7 @@ const secGates = '<div class="sec rv rv6"><div class="sec-h" data-href="08-Ops/�
 
 // footer
 const foot = '<footer class="foot rv rv6"><div class="inv"><span>INV-1 编译单向</span><span>INV-4 退役不删除</span><span>INV-7 QA APPEND-ONLY</span><span>INV-8 严谨只在闸门</span></div>'
-  + '<span>PHILO VAULT · 08-OPS · RUNS ×' + runs.length + ' · <a data-href="08-Ops/README">陋居层</a> · <a data-href="00-Dashboard/MOC">MOC</a></span></footer>';
+  + '<span>' + esc(CFG.title) + ' · 08-OPS · RUNS ×' + runs.length + ' · <a data-href="08-Ops/README">陋居层</a> · <a data-href="00-Dashboard/MOC">MOC</a></span></footer>';
 
 /* ───── 知识跟踪条 ───── */
 const watchHtml = contestedNodes.length ? '<div class="watchbar rv rv2">'
@@ -308,6 +290,33 @@ const watchHtml = contestedNodes.length ? '<div class="watchbar rv rv2">'
     + (p.watch ? ' <span class="wcrux">→ ' + esc(p.watch) + '</span>' : '')
     + '</span>').join('<span style="color:var(--hair-2);margin:0 6px">·</span>')
   + '</div>' : '';
+
+/* ───── 今日 Pulse（启发束·满宽，置于网格之上）—— 心跳员产出，仿 ChatGPT Pulse 晨间卡 ───── */
+let secPulse = "";
+if (CFG.features && CFG.features.pulse) {
+  const ACC = { g: "var(--green)", r: "var(--red)", a: "var(--amber)", s: "var(--slate)" };
+  const pulseFresh = pulseDoc && pulseDoc.date && pulseDoc.date.toFormat && pulseDoc.date.toFormat("yyyy-MM-dd") == todayStr;
+  let pulseInner;
+  if (!pulseDoc) {
+    pulseInner = '<div class="qempty"><div class="big">心跳未起。</div>还没有今日启发 —— 终端说「生成今日 pulse」</div>';
+  } else {
+    pulseInner = '<div class="plz">' + pulseCards.map(c => {
+      const acc = ACC[c.accent] || ACC.a;
+      const refs = Array.isArray(c.refs) ? c.refs : (c.refs ? [c.refs] : []);
+      const refHtml = refs.map(r => '<span class="plref" data-href="' + esc(r) + '">' + esc(r) + '</span>').join("");
+      return '<div class="plcard" data-href="' + pulseDoc.file.path + '" style="border-left-color:' + acc + '">'
+        + '<div class="pltag"><span>' + esc(cut(c.tag || "", 30)) + '</span><span class="pln" style="color:' + acc + '">' + esc(c.n || "") + '</span></div>'
+        + '<div class="pltitle">' + esc(c.title || "") + '</div>'
+        + '<div class="plbody">' + esc(c.body || "") + '</div>'
+        + (c.hook ? '<div class="plhook"><b>对谈入口 ·</b> ' + esc(c.hook) + '</div>' : "")
+        + (refHtml ? '<div class="plrefs">' + refHtml + '</div>' : "")
+        + '</div>';
+    }).join("") + '</div>';
+  }
+  const pulseDateStr = pulseDoc && pulseDoc.date && pulseDoc.date.toFormat ? pulseDoc.date.toFormat("yyyy-MM-dd") : todayStr;
+  const pulseMeta = pulseDoc ? (pulseCards.length + ' 张 · ' + (pulseFresh ? '今日 · fresh' : pulseDateStr) + ' · ' + esc(cut(pulseDoc.source || "", 32))) : 'NO PULSE';
+  secPulse = '<div class="sec plsec rv rv2"><div class="sec-h" data-href="' + (pulseDoc ? pulseDoc.file.path : "08-Ops/pulse") + '"><h2><span class="no">✦</span>今日 Pulse · 启发</h2><span class="meta">DAILY PULSE · ' + pulseMeta + '</span></div>' + pulseInner + '</div>';
+}
 
 /* ───── 组装 ───── */
 const root = dv.el("div", "");

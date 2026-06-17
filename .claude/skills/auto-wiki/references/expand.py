@@ -169,11 +169,31 @@ def render_text(seed, depth, rings, subedges, nodes):
 
 # ── 结构空洞扫描（全库巡检：找该织入却没织入的节点）──────────────────
 SKIP_TYPES_SCAN = {"source", "analysis", "ontology"}   # 天然边缘，不算洞
-ANCHOR_TYPES = {"part_of", "instance_of"}              # 把节点归入概念树的边
-# 真·概念间思想边（有其一即"已横向织入"，不进富化池）
-IDEA_TYPES = {"enables", "develops", "supports", "critiques", "grounds", "responds_to"}
-# 纯归属/标签边：只有这些 = 没真正连进结构（"谁提的"不算织入）
-ATTRIB_ONLY = {"proposed_by", "authored_by", "classified_as"}
+# 下面三组关系词分桶是 per-vault 的（金融用 drives/transmits_to…，哲学用 grounds/enables…）。
+# 默认是「金融∪哲学」并集，真值由各库 .burrow/config.json 的 relations 覆盖（见 load_scan_vocab）。
+ANCHOR_TYPES = {"part_of", "instance_of"}              # 把节点归入概念树的锚边
+# 真·结构/思想边（有其一即"已横向织入"，不进富化池）
+IDEA_TYPES = {"enables", "develops", "supports", "critiques", "grounds", "responds_to",
+              "operated_by", "implements", "transmits_to", "bounds", "drives"}
+# 纯归属/标签边：只有这些 = 没真正连进结构（"谁提的/什么类"不算织入）
+ATTRIB_ONLY = {"proposed_by", "authored_by", "classified_as", "references"}
+
+
+def load_scan_vocab(vault_root):
+    """scan 用的关系词分桶：优先读 {vault}/.burrow/config.json 的 relations，缺省回退上面的并集。
+    返回 (anchor, idea, attrib_only) 三个 set；让同一份 expand.py 在不同库按各自受控词表判洞。"""
+    cfg_path = os.path.join(vault_root, ".burrow", "config.json")
+    rel = {}
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, encoding="utf-8") as f:
+                rel = (json.load(f) or {}).get("relations", {}) or {}
+        except Exception:
+            rel = {}
+    anchor = set(rel.get("anchor") or ANCHOR_TYPES)
+    idea = set(rel.get("idea") or IDEA_TYPES)
+    attrib = set(rel.get("attrib_only") or ATTRIB_ONLY)
+    return anchor, idea, attrib
 
 
 def scan_holes(nodes, out_adj, in_adj):
@@ -256,6 +276,8 @@ def main():
     nodes, out_adj, in_adj = load_graph(a.vault, a.include_retired)
 
     if a.scan:
+        global ANCHOR_TYPES, IDEA_TYPES, ATTRIB_ONLY
+        ANCHOR_TYPES, IDEA_TYPES, ATTRIB_ONLY = load_scan_vocab(a.vault)
         hard, soft = scan_holes(nodes, out_adj, in_adj)
         print(json.dumps({"hard": hard, "soft": soft}, ensure_ascii=False, indent=2) if a.json
               else render_scan(hard, soft, nodes))

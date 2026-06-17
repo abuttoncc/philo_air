@@ -89,14 +89,14 @@ tags: [ontology, contract]
 
 > `wiki/{name}/` 的本体定义。`ingest`/`recall` 前先读本页。引擎规范见 `.claude/skills/auto-wiki/`，
 > 与 [[wiki/metaphysics/_ontology|metaphysics 母本]] **共用同一套 6 档时间模型、退役不删除协议与三分铁律**——
-> **本页只声明 {hub} 领域特有的节点类型与受控关系词表**，其余一律以引擎 + metaphysics 母本契约为准。
+> **本页只声明 {hub} 领域特有的节点类型与受控关系词表**，其余一律以引擎 + metaphysics 母本 契约为准。
 
-## 0. 总原则（同母本）
+## 0. 总原则（同 metaphysics 母本）
 1. **节点 / 数据 / 边 三分**：数值绝不是节点（进 data.db）；关系是边不是页；分类标签是边不是页。
 2. **编译单向**：`Inbox(散文) → ingest → wiki(本体)`。严谨只用在已结晶的知识。
 3. **退役不删除**：T1/T2/T3 任何变化都是「旧行封 valid_to + 插新行」，永不 DELETE，必有 T4 事件盖章。
 
-## 1. 节点判据（同母本的「能不能指向就是这一个」）
+## 1. 节点判据（同 metaphysics 母本 的「能不能指向就是这一个」）
 能用手指指向「就是这一个」、明年同名还指同一个 → **实体**；必须先讲一段机理才懂 → **概念**。
 
 ## 2. 节点类型（=目录=图谱着色）
@@ -106,7 +106,7 @@ tags: [ontology, contract]
 
 > ⚠️ 脚手架生成的占位表——首次 ingest 前**必须**把每行的判据/例子填实，并删掉本提示。
 
-## 3. 受控关系词表（{hub} 特有；通用词 references/part_of/instance_of 等沿用母本）
+## 3. 受控关系词表（{hub} 特有；通用词 references/part_of/instance_of 等沿用 metaphysics 母本）
 <在此声明本域的关系词：from_type → to_type，一句话语义。lint 时以此对照，越界边拒绝。>
 
 ## 4. 跨域连接

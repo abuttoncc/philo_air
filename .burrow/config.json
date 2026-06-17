@@ -1,0 +1,20 @@
+{
+  "_note": "本库个性化配置；引擎来自 ../_burrow-core。改完跑 `python ../_burrow-core/burrow.py sync philo_air` 渲染回本库。",
+  "title_proper": "Philo Vault",
+  "dashboard": {
+    "title": "PHILO VAULT",
+    "order": ["人物", "学派", "著作", "概念", "论证", "事件", "分析", "来源"],
+    "labels": ["问题", "应用议题", "义务论", "后果主义", "美德伦理", "一元论", "二元论"],
+    "navOntology": "wiki/_index",
+    "features": { "pulse": true }
+  },
+  "new_domain": {
+    "mother_ontology_link": "[[wiki/metaphysics/_ontology|metaphysics 母本]]",
+    "mother_ref": "metaphysics 母本"
+  },
+  "relations": {
+    "anchor": ["part_of", "instance_of"],
+    "idea": ["enables", "develops", "supports", "critiques", "grounds", "responds_to"],
+    "attrib_only": ["proposed_by", "authored_by", "classified_as", "references"]
+  }
+}
