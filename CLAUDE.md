@@ -141,6 +141,7 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 
 ## 三、编译生命周期（知识看板如何形成）
 
+⓪ **拾遗（capture，进料口）**：会话结束/夜间，`philo-dream`（拾遗员）把 Claude Code 对话里**会蒸发的 conviction** 抽成 ≤5 条候选落 Inbox（捕获免费），守脱靶闸、零 wiki 写入。这是飞轮的进料口——让库从日常对话自己长，而非等人手喂。详见 `.claude/skills/philo-dream/`。
 ① **发散提问**：在 Inbox 用研究笔记模板写「困惑/目标/思路/线索」。
 ② **研究发散**：读原典/SEP/讲义/播客，或直接与 Agent 对谈，边讨论边记。
 ③ **编译（ingest）**：读源材料 → 先查 canonical（含 aliases）合并 or 按决策树建节点 → 给每条知识定 6 档时间档写对应表 → 补受控关系边 → 走退役协议 → 研究综述落 `分析/` → 更新 Hub（`{hub}.md`）+ `log.md` → 跑 `schema.py` 校验 → 刷新位置编码（`position_encoding.py` + `--report`）→ **在 `08-Ops/runs/` 留 run 档（活动留痕，交互/无人值守皆建）**。
@@ -203,7 +204,7 @@ python .claude/skills/auto-wiki/references/new_domain.py <name> \
 
 | 落点 | 内容 |
 |---|---|
-| `08-Ops/routines/` | agent 契约注册表（分诊员/答题员/研究员/结构巡检员/编译裁决员），契约 = trigger/scope/budget/escalation，**改契约 = 改权限** |
+| `08-Ops/routines/` | agent 契约注册表（拾遗员/分诊员/答题员/研究员/结构巡检员/编译裁决员/心跳员），契约 = trigger/scope/budget/escalation，**改契约 = 改权限**。**拾遗员**=飞轮进料口（capture，对话→Inbox 候选，对应 dpagt 的 `dream.py`）|
 | `08-Ops/runs/` | run 记录（**交互与无人值守皆建**，Dashboard「运行轨迹」唯一数据源）：无人值守开跑建档（status: running）、结束补全；交互收尾一次性建（status: ok）。皆含飞轮步进/产出/预算 |
 | `08-Ops/review/` | 审核队列：高危写入候选卡（pending → approved/rejected/contested） |
 | `08-Ops/审批账本.md` | 信任账本：每类写入 streak/threshold/state + append-only 审计日志 |
