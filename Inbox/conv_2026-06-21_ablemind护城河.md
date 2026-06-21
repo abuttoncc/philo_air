@@ -3,9 +3,12 @@ tags: [拾遗, capture-candidate]
 type: conviction-candidate
 created: 2026-06-21
 source-session: cli-moat-discussion
-status: open
+status: digested
 candidate-domains: [product-philosophy, capital-allocation]
-compiled: false
+compiled: true
+digested: 2026-06-21
+triage: crystallize
+sinks: [wiki/product-philosophy/分析/AbleMind护城河与飞轮分析]
 ---
 
 # 拾遗候选 · AbleMind 的护城河盘点(2026-06-21)

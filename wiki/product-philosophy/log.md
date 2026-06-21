@@ -73,3 +73,11 @@
 - 残留: 来源页 deg=1（source 天然叶子，正常，不强织）
 - 健康度: 良好
 - Conflicts: none
+
+## 2026-06-21 — digest-inbox：AbleMind 三候选结晶（飞轮/护城河/多模型护城河）
+- Source: Inbox/conv_2026-06-20_ablemind飞轮 + conv_2026-06-21_ablemind护城河 + conv_2026-06-21_ablemind多模型护城河（三场讨论记录，互引、同锚母题 [[AbleMind 的一句话定位]]）
+- Created: 1 页 — 分析/AbleMind护城河与飞轮分析（派生视图，跨域 capital-allocation；AbleMind/3.0 工作区防扩散不本体化）
+- relations: 6 条 references（→竞争优势模式[跨域]/不可替代性拷问/死亡过滤器/隐形工艺/设计即如何运作/乔布斯产品哲学映射智能体工作区3.0）
+- 防扩散：通用概念（先发优势 / 多模型=生存基底 / 累积型护城河）作 newnode 候选报人工裁决，未自动建节点
+- Validation: schema 44/44 PASSED；Broken Link 0（跨域 references 解析正常）
+- Conflicts: none
