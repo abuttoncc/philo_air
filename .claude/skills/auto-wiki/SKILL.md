@@ -351,3 +351,32 @@ Skill 核心是领域无关的编译引擎。垂直领域的专业性通过两�
 
 下次执行任务时，Agent 先读相关 wiki → 带着积累的知识工作
 ```
+
+## 导出：OKF 交换层（对外，单向）
+
+把某个领域投影成一个 **OKF v0.1 bundle**（Open Knowledge Format，
+GoogleCloudPlatform/knowledge-catalog）——markdown + frontmatter 目录的厂商中立
+最小知识交换格式，唯一必填项是 frontmatter 的 `type`。给非 Obsidian 工具、外部
+消费者、或想 `git` 交换知识时用。
+
+```
+python references/export_okf.py wiki/{domain}            # 默认输出到 <vault>/okf/{domain}/（wiki 树外，不进 Obsidian 图谱）
+python references/export_okf.py wiki/{domain} --out <dir> --name "<显示名>"
+```
+
+触发词：`导出 okf` / `export okf` / `生成交换包` / `对外交换格式`。
+
+**这是单向投影，不是平级存储**。本库的页面天生已满足 OKF（已带 `type`/`title`/
+`relations`），导出几乎无损：节点页 → concept 文档、目录类型 → OKF type、`[[wikilink]]`
+→ bundle 相对链接 `/dir/x.md`、Hub/类型目录 → `index.md`、`log.md` 原样合规。
+
+**会被压平的（OKF 没有它们的结构位置）**——导出脚本把这些标 ⚠️ 后做有损投影：
+- `data.db` 双时态层（T0 观测 / T1+T2 facts 拉链）→ 压成快照 markdown 表，丢 valid/
+  transaction 两轴、supersedes 链、退役历史；
+- 受控关系边的**类型**（`operated_by`/`bounds` 等）→ 链接本身无类型，类型降级进 prose；
+  `bound_role`(upper/lower/center) 等边属性丢失。
+
+**铁律：绝不反向以 OKF 为主存**——那会丢掉时间模型、类型边、可查询性这三样本库核心
+价值。严格内核（data.db + 受控词表 + 6 档时间模型）只在库内享用，OKF 只是「出入境
+口岸」。分类标签（`classified_as` 的 `价格型` 等，本库边非页）渲染成文字而非链接，
+脚本从 `.burrow/config.json` 的 `dashboard.labels` 读取这份清单。
