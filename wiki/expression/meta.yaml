@@ -1,0 +1,13 @@
+name: expression
+domain: expression
+direction: 实践哲学          # 大方向（科技 / 金融），_index.md 据此分组
+ontology_type: domain
+description: 表达之道：把复杂内容讲清楚、讲动人。三facet归一——叙事表达(勾立转收)/思想表达(金字塔·结论先行)/产品表达(产品即传达)，以SCQA为叙事与逻辑的铰链
+central_entity: 表达
+hub: 表达                       # Obsidian Hub 页文件名（不含 .md）
+keywords: [表达, 叙事表达, 思想表达, 产品表达, 叙事, 金字塔原理, 结论先行, MECE, SCQA, 起承转合, 救猫咪, 相声, 包袱, 三翻四抖, 悬念, 预期管理, 勾立转收, 修辞, 演讲, 说服, pitch, 发布会, demo, 谋篇, 讲清楚, 讲动人]                 # 路由关键词：ingest/recall 据此判断材料属哪个域
+validator: none
+validator_coverage: none
+schema_version: '2.0'
+created: '2026-07-05'
+updated: '2026-07-05'
