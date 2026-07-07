@@ -4,8 +4,8 @@ type: entity
 aliases: [安德鲁·阿贝拉]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Abela与Duarte调研]
-confidence: medium
+sources: [2026-07-07-Abela与Duarte调研, 2026-07-07-ExtremePresentation官方ChartChooser原始PDF, 2026-07-07-StephenFew的AbelasFolly博客原文]
+confidence: high
 classified_as: [可视化的视觉表达]
 tags: [人物, 表达, 可视化的视觉表达]
 ---

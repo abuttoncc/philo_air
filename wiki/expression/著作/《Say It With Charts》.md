@@ -4,7 +4,7 @@ type: entity
 aliases: [用图表说话, Say It With Charts]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Minto金字塔与Zelazny图表调研]
+sources: [2026-07-07-Minto金字塔与Zelazny图表调研, 2026-07-07-Zelazny五种关系多方二手来源交叉印证]
 confidence: high
 classified_as: [可视化的视觉表达]
 relations:

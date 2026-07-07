@@ -5,7 +5,7 @@ durability: medium
 aliases: [六大图形族, Diagrammer分类]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Abela与Duarte调研]
+sources: [2026-07-07-Abela与Duarte调研, 2026-07-07-Duarte官方博客与Diagrammer工具页]
 confidence: medium
 classified_as: [可视化的视觉表达]
 falsifiable_by: ["Duarte 自己的 Diagrammer 检索工具实际使用 Flow/Network/Stack/Segment/Join 五分类，与本框架六族命名不一致，且未见官方对两套分类关系的说明——若未来证实工具分类才是权威版本，本框架的六族命名需要修正"]

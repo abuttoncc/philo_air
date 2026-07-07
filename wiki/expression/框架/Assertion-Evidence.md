@@ -5,7 +5,7 @@ durability: medium
 aliases: [断言-证据, A-E, AE Approach]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Alley与久恒启一调研]
+sources: [2026-07-07-Alley与久恒启一调研, 2026-07-07-AssertionEvidence学术论文与官网教程]
 confidence: medium
 classified_as: [可视化的视觉表达]
 falsifiable_by: ["Speaking PowerPoint 博客指出 2011 年对照实验的对照组设计有污染（混用纯文字与文字+冗余图片两种呈现，违反多媒体学习冗余原则），可能结构性偏向 A-E 组，且仅报告了对 A-E 有利的部分测试题"]

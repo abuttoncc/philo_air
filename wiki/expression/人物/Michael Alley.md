@@ -4,8 +4,8 @@ type: entity
 aliases: [迈克尔·阿利]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Alley与久恒启一调研]
-confidence: medium
+sources: [2026-07-07-Alley与久恒启一调研, 2026-07-07-AssertionEvidence学术论文与官网教程]
+confidence: high
 classified_as: [可视化的视觉表达]
 tags: [人物, 表达, 可视化的视觉表达]
 ---

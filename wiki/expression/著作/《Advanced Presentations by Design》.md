@@ -4,8 +4,8 @@ type: entity
 aliases: [Advanced Presentations by Design]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Abela与Duarte调研]
-confidence: medium
+sources: [2026-07-07-Abela与Duarte调研, 2026-07-07-ExtremePresentation官方ChartChooser原始PDF]
+confidence: high
 classified_as: [可视化的视觉表达]
 relations:
   - {target: Andrew Abela, type: authored_by}

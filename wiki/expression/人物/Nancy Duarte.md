@@ -4,8 +4,8 @@ type: entity
 aliases: [南希·杜瓦特]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Abela与Duarte调研]
-confidence: medium
+sources: [2026-07-07-Abela与Duarte调研, 2026-07-07-Duarte官方博客与Diagrammer工具页]
+confidence: high
 classified_as: [可视化的视觉表达]
 tags: [人物, 表达, 可视化的视觉表达]
 ---

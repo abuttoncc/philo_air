@@ -5,7 +5,7 @@ durability: medium
 aliases: [Extreme Presentation Method, 图表选择器]
 created: '2026-07-07'
 updated: '2026-07-07'
-sources: [2026-07-07-Abela与Duarte调研]
+sources: [2026-07-07-Abela与Duarte调研, 2026-07-07-ExtremePresentation官方ChartChooser原始PDF, 2026-07-07-StephenFew的AbelasFolly博客原文]
 confidence: medium
 classified_as: [可视化的视觉表达]
 preconditions: [数据可被归入 Relationship/Comparison/Distribution/Composition 四类之一]

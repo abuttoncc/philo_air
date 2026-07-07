@@ -31,3 +31,16 @@
 - 待办：逐一为 Zelazny/Duarte/Abela/Alley/久恒启一 建 人物+著作+框架 节点；
   为已产出的 12 种"逻辑类型→视觉形式"映射 + 待补 6 种建 概念 节点对；分析/ 建总表；案例/ 待拆解卡。
 - Conflicts: none
+- ingest（deep ingest，落实上述待办的人物+著作+框架部分）：
+  - Source: 来源/2026-07-07-Minto金字塔与Zelazny图表调研、来源/2026-07-07-Abela与Duarte调研、来源/2026-07-07-Alley与久恒启一调研
+  - Created 人物(5)：Gene Zelazny · Andrew Abela · Nancy Duarte · Michael Alley · 久恒启一
+  - Created 著作(5)：《Say It With Charts》·《Advanced Presentations by Design》·《slide：ology》·《The Craft of Scientific Presentations》·《図で考える人は仕事ができる》
+  - Created 框架(5)：Zelazny五种数据关系图表选择法 · Chart Chooser · Duarte六大图形族 · Assertion-Evidence · 図解思考
+  - Created 分析(1)：逻辑先行与形状先行——可视化的视觉表达五框架综述
+  - Updated：框架/金字塔原理（追加 classified_as 可视化的视觉表达 + "页序/页内结构机制"补充段 + sources 追加新来源，未触发退役——纯增量丰富，无旧结论被推翻）
+  - Relations：42（思想边 24：authored_by 5、proposed_by 3、appears_in 3、develops 1、references 6、对应 1、分析页 references 5 + facet 分类边 18：新 18 页 classified_as→可视化的视觉表达，含金字塔原理追加第二 facet、综述页双 facet）；data.db 全域总计 100（含 2026-07-05 批 58）
+  - 签名边 对应：Assertion-Evidence ↔ 金字塔原理（action title / 标题即断言，跨传统同构）
+  - schema 校验：40/40 PASS（全域，含既有 20 页）
+  - 如实记录的分歧（未调和）：Abela Chart Chooser 顶层四分类被 Stephen Few《Abela's Folly》批评不满足 MECE；Duarte 书中六大图形族与其 Diagrammer 工具实际五分类不一致；Alley 2011 年实证研究的对照组设计受 Speaking PowerPoint 博客方法论批评；久恒启一"六种基本图解模式"清单未找到本人权威出处，低置信度标注
+  - 待补：12 种"逻辑类型→视觉形式"映射的概念页对（并列→网格等）+ 6 种候选 + 真实案例拆解卡（调研需求 C 线）+ SmartArt/Diagrammer 全量盘点（B 线）
+  - Conflicts: none（分歧均已如实并列标注，非同级矛盾）
