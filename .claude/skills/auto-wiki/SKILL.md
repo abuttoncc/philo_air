@@ -1,11 +1,17 @@
 ---
 name: auto-wiki
-version: 0.2.0
+version: 0.3.0
 description: |
   知识编译器：教 Agent 把源文件增量编译进持久化 wiki，实现跨会话知识积累。
   运行时依赖：Python 3.8+（标准库 + pydantic）。可选增强：WebSearch（主动搜索）、外部 MCP 校验器（逻辑校验）。
 
-  五个模式，根据用户意图自动路由：
+  六个模式，根据用户意图自动路由：
+
+  source → 用户给了一份索引/课题清单，想动用全部取材通道向外界搜集原始材料。
+  触发词：source、取材、采集、根据索引找资料、找资料、铺料、铺材料、按这个清单搜。
+  收口在 Inbox/raw，不碰 wiki（守 ingest 闸）。是管道最前端的「研究发散」相，
+  产出正是 ingest 的输入。与 deep-dive 方向相反：deep-dive 自找 wiki 内部缺口，
+  source 按人给的索引向外 fan-out 取材。
 
   recall → 用户想基于已有知识回答问题。
   触发词：recall、知识模式、打开 wiki、带着知识回答、根据 wiki、
@@ -28,6 +34,7 @@ description: |
 
   路由规则：如果用户没有提供新材料但提到了 wiki 或领域知识 → recall。
   如果用户提供了文件或大段文本 → ingest。
+  如果用户给的是一份索引/钩子清单、说"找资料/取材/按这个搜" → source。
   如果用户说"deep-dive"或"上强度" → 执行 deep-dive 管道。
   如果不确定 → 问用户。
 ---
@@ -71,19 +78,39 @@ Agent 每天帮你做研究、写报告、拉数据——但做完就忘。下�
 
 不是 RAG（每次从文档堆里临时检索），是编译——Agent 读完源文件后，把关键信息写进 wiki 已有页面，和旧知识比较、合并、标注冲突。下次执行任何任务前，先读 wiki，从积累的基础上工作。
 
-## 四个模式
+## 六个模式
 
 | 模式 | 触发 | Agent 做什么 |
 |------|------|-------------|
+| **source** | `source` / "根据索引找资料" / "取材" | 解析索引/钩子清单 → 动用全部取材通道 fan-out 搜原料 → 整合带溯源 → **落 Inbox/raw（不碰 wiki）** |
 | **recall** | `recall` / `recall {topic}` | 加载 wiki 上下文，后续所有问题先查 wiki 再回答 |
 | **ingest** | 用户提供源文件或文本 | 读源文件 → 搜索已有 wiki → 比较新旧 → 更新/创建页面 → 更新索引 |
 | **query** | 用户提问（单次） | 读 hub 页面 → 找相关页面 → 综合回答 → 有价值的分析可归档 |
 | **lint** | 用户说"检查 wiki" | 扫描全部页面 → 合并重复 → 归档过时 → 报告矛盾和健康度 |
 | **deep-dive** | `deep-dive` / "上强度" | 运行 Coverage lint → 展示缺口报告 → 用户确认 → 搜索 + ingest 填补缺口 |
 
-> deep-dive 不是第五个独立模式——它是 lint（Coverage）和 ingest（带搜索工具）的组合管道。需要搜索工具（主动模式）。
+> **source 与 deep-dive 都涉及向外搜索，但方向相反**：deep-dive 由 `lint(Coverage)` 自动找 wiki **内部缺口**、搜回来**直接 ingest**；source 由**人给的索引**驱动、向外 fan-out 取材、**停在 Inbox/raw 闸前**。source 的产出正是 ingest / deep-dive 的输入。deep-dive 不是独立模式（= lint+ingest 组合管道）；source 是独立模式（管道最前端的取材相）。
 
 recall 模式 vs query 的区别：query 是单次操作（问一个问题，查一次 wiki）。recall 模式是持续状态——进入后，这轮对话里的每个问题都先过 wiki。
+
+---
+
+## source 模式（取材 / 采集）
+
+**详细协议见 `references/source-protocol.md`。**
+
+管道最前端的取材相：人给一份**索引/钩子清单**，Agent 动用**全部取材通道** fan-out 搜原料，整合带溯源后**落 `Inbox/raw/`，不碰 wiki**（守 ingest 闸）。产出正是 ingest / deep-dive 的输入。
+
+简要流程：
+
+0. **路由**：读 `wiki/_index.md`，把索引每条钩子命中到域，按库配置决定取材通道。
+1. **拆索引**为原子查询（可检索的具体问题），列给用户过目可增删。
+2. **fan-out 取材**：按钩子命中选通道并行检索——**取材通道按库配置，见库内 CLAUDE.md「取材通道」节**；无库配置时用通用通道（WebSearch/WebFetch 等）兜底。一条查询尽量交叉 2+ 通道互证；数值走数据源工具不凭记忆。
+3. **收口整合**：每条原子查询一段「发现 + 溯源(标题+机构/作者+日期+链接) + 渠道可信度档」；多源冲突并列标 `contested`，**不在此裁决**。
+4. **落 Inbox/raw**：追加到来源笔记，或新建 `{date}-{slug}-取材.md`，frontmatter `compiled: false` + `取材通道` + `索引来源`。
+5. **报告**：每条钩子找到几条材料、覆盖/缺口、哪几条够 ingest 了。
+
+**纪律**：不碰 wiki、不动 data.db；溯源以「标题+机构+日期」为准（链接会过期）；渠道分档（一手 > 二手·权威 > 二手，黑名单跳过；库特有分档纪律见库内 CLAUDE.md）；不裁决分歧。
 
 ---
 
@@ -168,6 +195,7 @@ Agent 执行：
 
 | 操作 | 必读 | 首次时读 | 有工具时读 |
 |------|------|---------|-----------|
+| **source** | `source-protocol.md` | — | `source-validation.md`（渠道分档/黑名单） |
 | **ingest** | `ingest-protocol.md`, `wiki-format.md`, `schema.py` | `storage-spec.md`（wiki 不存在时）, `seed-ontologies.md` + `seeds/{name}.md`（meta.yaml 声明了 seed 时） | `fact-check.md`, `source-validation.md` |
 | **query** | `query-protocol.md` | — | — |
 | **lint** | `lint-protocol.md`, `schema.py` | — | `validators/{name}.md`（seed 声明了 validator 时） |

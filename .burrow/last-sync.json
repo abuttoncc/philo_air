@@ -1,8 +1,8 @@
 {
   "burrow_version": "0.1.0",
-  "synced_at": "2026-06-25T11:26:34+00:00",
+  "synced_at": "2026-07-08T05:05:17+00:00",
   "files": [
-    ".claude/skills/auto-wiki/references/export_okf.py",
-    ".claude/skills/auto-wiki/SKILL.md"
+    ".claude/skills/auto-wiki/SKILL.md",
+    ".claude/skills/auto-wiki/references/source-protocol.md"
   ]
 }
