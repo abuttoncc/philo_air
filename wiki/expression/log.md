@@ -44,3 +44,15 @@
   - 如实记录的分歧（未调和）：Abela Chart Chooser 顶层四分类被 Stephen Few《Abela's Folly》批评不满足 MECE；Duarte 书中六大图形族与其 Diagrammer 工具实际五分类不一致；Alley 2011 年实证研究的对照组设计受 Speaking PowerPoint 博客方法论批评；久恒启一"六种基本图解模式"清单未找到本人权威出处，低置信度标注
   - 待补：12 种"逻辑类型→视觉形式"映射的概念页对（并列→网格等）+ 6 种候选 + 真实案例拆解卡（调研需求 C 线）+ SmartArt/Diagrammer 全量盘点（B 线）
   - Conflicts: none（分歧均已如实并列标注，非同级矛盾）
+
+- deep-dive（lint Coverage + ingest 搜索填充，用户"all"批准全部缺口）：
+  - Gap Report：5 类缺口（12/6种映射概念缺失·单一来源·案例真空·结构孤儿误报），用户批准 all
+  - Created 概念(18)：12 种已产出映射（并列→网格/对比→双栏/因果→箭头链/权衡→2×2矩阵/包含→同心圆/循环→飞轮/筛选→漏斗/交集→韦恩图/趋势异变→折线+标注/增减构成→瀑布图/目标差距→差距柱/归纳支撑→轮辐）+ 6 种候选定稿（力场分析→推力阻力对置图/帕累托→帕累托图/阶段演进→成熟度阶梯图/泳道→泳道图/桥梁鸿沟→桥梁图/金字塔论证树）
+  - Created 案例(12)：4 组并行 agent 研究真实 slide，每组 3 个逻辑类型各 1 案例——Apple bento grid、Sequoia2008(×2：双栏/箭头链)、BCG增长份额矩阵、Simon Sinek黄金圈、亚马逊飞轮、Appcues漏斗、McKinsey韦恩图、ConvertKit异变(contested)、McKinseyDECC瀑布图、DLA Piper差距图、Altra轮辐图
+  - Created 来源(11)：讨论产出映射清单(1) + 5 个权威二手来源(ExtremePresentation PDF/Stephen Few博客/Duarte官方博客/AssertionEvidence学术论文/久恒启一官网) + 4 个案例调研来源
+  - Updated：18 个人物/著作/框架页补第二来源解决 single_source（8 页 confidence medium→high）；12 个映射概念页因案例佐证提升 confidence（低→中/高不等，1 个降为 contested）
+  - Relations：exemplifies 12（案例→映射概念）+ instance_of/对应/references 若干（含补齐 2 个候选映射的结构边：力场分析 instance_of 对比→双栏、桥梁鸿沟 对应 目标差距→差距柱）+ classified_as 30（16 新节点 + 12 案例 + 2 补边页）
+  - schema 校验：81/81 PASS（全域）；位置编码 86 节点；expand.py --scan 复验：本域 0 个 P1 真洞（力场分析/桥梁鸿沟已补边）
+  - 如实记录：ConvertKit 案例标 contested（视觉形式与映射定义有出入，异变原因写在图表下方文字而非图上标注，非干净确证）；本域仍缺"图上确有标注"的趋势异变干净案例，留待下一批
+  - 待补：SmartArt/Diagrammer 全量盘点（B 线，仍未做）
+  - Conflicts: none（1 处 contested 已标注，非同级矛盾）
